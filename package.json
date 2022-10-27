@@ -4,7 +4,7 @@
     "access": "public"
   },
   "exports": {
-    ".": "./src/???"
+    ".": "./src/tar.mjs"
   },
   "scripts": {
     "test": "npm run test:browser-ava && npm run test:ava",
