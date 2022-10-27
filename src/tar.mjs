@@ -28,7 +28,7 @@ export async function* entries(tar) {
   const reader = tar.getReader();
   let { done, value } = await reader.read();
 
-  const name = toString(value.subrray(0, 100));
+  const name = toString(value.subarray(0, 100));
 
   yield { name };
 }
