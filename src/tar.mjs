@@ -19,6 +19,8 @@
  *  prefix       345             155             NUL-terminated if NUL fits
  */
 
+const BLOCKSIZE = 512;
+
 /**
  *
  * @param {ReadableStream} tar
@@ -26,6 +28,8 @@
  */
 export async function* entries(tar) {
   const reader = tar.getReader();
+
+
   let { done, value } = await reader.read();
 
   for (let pos = 0; pos < value.length; ) {
@@ -38,25 +42,23 @@ export async function* entries(tar) {
 
     console.log(pos, name, size);
 
-    const stream = {
-      getReader() {
-        return {
-          async read() {
-            
-            return {
-              value: value.subarray(pos + 512, pos + 512 + size),
-              done: true
-            };
-          }
-        };
-      }
-    };
+    const stream = new ReadableStream({
+      start() {},
+      cancel() {},
+
+      async pull(controller) {
+        /*
+          controller.close();
+        */
+        controller.enqueue(value.subarray(pos + BLOCKSIZE, pos + BLOCKSIZE + size));
+      },
+    });
 
     // console.log(size, overflow(size));
 
     yield { name, size, stream };
 
-    pos += 512 + size + overflow(size);
+    pos += BLOCKSIZE + size + overflow(size);
   }
 }
 
@@ -73,6 +75,6 @@ export function toInteger(bytes) {
 }
 
 function overflow(size) {
-  size &= 511;
-  return size && 512 - size;
+  size &= BLOCKSIZE - 1;
+  return size && BLOCKSIZE - size;
 }
