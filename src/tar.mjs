@@ -29,8 +29,9 @@ export async function* entries(tar) {
   let { done, value } = await reader.read();
 
   const name = toString(value.subarray(0, 100));
+  const size = toInteger(value.subarray(124, 12));
 
-  yield { name };
+  yield { name, size };
 }
 
 export function toString(bytes) {
@@ -39,4 +40,8 @@ export function toString(bytes) {
     chars.push(bytes[i++]);
   }
   return String.fromCharCode(...chars);
+}
+
+export function toInteger(bytes) {
+  return parseInt(toString(bytes), 8);
 }
