@@ -8,6 +8,8 @@ test("entry", async t => {
   const nodeStream = createReadStream(
     new URL("fixtures/test.tar", import.meta.url).pathname
   );
+
+  // @see https://exploringjs.com/nodejs-shell-scripting/ch_web-streams.html
   const stream = Readable.toWeb(nodeStream);
 
   const e = [{ name: "a.txt" }];
