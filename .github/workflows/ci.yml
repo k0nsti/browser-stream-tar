@@ -1,0 +1,75 @@
+name: CI
+'on': push
+jobs:
+  test-node:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        node-version:
+          - 18.12.0
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3.5.1
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - run: npm ci
+      - run: npm run cover --if-present
+      - name: Coveralls Parallel
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: run-${{ matrix.test_number }}
+          path-to-lcov: build/coverage/lcov.info
+          parallel: true
+        continue-on-error: true
+  test-browser:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser:
+          - chromium
+          - firefox
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3.5.1
+        with:
+          node-version: 18.12.0
+          cache: npm
+      - run: npm ci
+      - run: npm run test:browser-ava --if-present
+        env:
+          BROWSER: ${{ matrix.browser }}
+  release:
+    needs:
+      - test-node
+      - test-browser
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3.5.1
+        with:
+          node-version: 18.12.0
+          cache: npm
+      - run: npm ci
+      - run: npx semantic-release
+        env:
+          CI: 'true'
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PKGBUILD_PUBLISH: ${{ secrets.PKGBUILD_PUBLISH }}
+  finish:
+    needs:
+      - test-node
+    runs-on: ubuntu-latest
+    steps:
+      - name: Coveralls Finished
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          path-to-lcov: build/coverage/lcov.info
+          parallel-finished: true
