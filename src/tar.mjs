@@ -33,10 +33,10 @@ export async function* entries(tar) {
   yield { name };
 }
 
-function toString(bytes) {
+export function toString(bytes) {
   const chars = [];
-  for (const i = 0; i < bytes.length; ) {
-    chars.push(((bytes[i++] & 0xff) << 8) | (bytes[i++] & 0xff));
+  for (let i = 0; i < bytes.length && bytes[i] !== 0; ) {
+    chars.push(bytes[i++]);
   }
-  return String.fromCharCode.apply(null, chars);
+  return String.fromCharCode(...chars);
 }
