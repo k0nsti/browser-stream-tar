@@ -5,7 +5,7 @@ test("fetch entries", async t => {
   const e = [{ name: "ABC" }];
 
   const response = await fetch(
-    "https://github.com/k0nsti/browser-stream-tar/raw/main/tests/fixtures/test.tar"
+    "https://raw.githubusercontent.com/k0nsti/browser-stream-tar/main/tests/fixtures/test.tar"
   );
 
   let i = 0;
