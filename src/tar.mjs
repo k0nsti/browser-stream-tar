@@ -28,23 +28,36 @@ export async function* entries(tar) {
   const reader = tar.getReader();
   let { done, value } = await reader.read();
 
-  const name = toString(value.subarray(0, 100));
-  const size = toInteger(value.subarray(124, 124 + 12));
+  for (let pos = 0; pos < value.length; ) {
+    const name = toString(value.subarray(pos + 0, pos + 100));
+    const size = toInteger(value.subarray(pos + 124, pos + 124 + 12));
 
-  const stream = {
-    getReader() {
-      return {
-        async read() {
-          return { value: value.subarray(512, 512 + size), done: true };
-        }
-      };
+    if (Number.isNaN(size)) {
+      break;
     }
-  };
 
-  // let n = 512 + ((size + 511) % 512);
-  // console.log(size,512 - (size % 512));
+    console.log(pos, name, size);
 
-  yield { name, size, stream };
+    const stream = {
+      getReader() {
+        return {
+          async read() {
+            
+            return {
+              value: value.subarray(pos + 512, pos + 512 + size),
+              done: true
+            };
+          }
+        };
+      }
+    };
+
+    // console.log(size, overflow(size));
+
+    yield { name, size, stream };
+
+    pos += 512 + size + overflow(size);
+  }
 }
 
 export function toString(bytes) {
@@ -57,4 +70,9 @@ export function toString(bytes) {
 
 export function toInteger(bytes) {
   return parseInt(toString(bytes), 8);
+}
+
+function overflow(size) {
+  size &= 511;
+  return size && 512 - size;
 }
