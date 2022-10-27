@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: daily
+    commit-message:
+      prefix: 'fix(deps):'
+      prefix-development: 'chore(deps):'
+    labels:
+      - npm dependencies
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily

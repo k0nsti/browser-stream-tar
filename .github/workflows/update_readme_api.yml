@@ -1,0 +1,22 @@
+name: API to readme
+'on':
+  schedule:
+    - cron: 31 14 * * *
+jobs:
+  update_readme_api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3.5.1
+        with:
+          node-version: 18.12.0
+      - run: npm ci
+      - run: npm run docs
+      - uses: gr2m/create-or-update-pull-request-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path: README.md
+          title: Sync API into README
+          branch: readme-api
+          commit-message: 'docs(README): sync API'
