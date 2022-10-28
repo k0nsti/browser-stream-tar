@@ -29,36 +29,42 @@ const BLOCKSIZE = 512;
 export async function* entries(tar) {
   const reader = tar.getReader();
 
-
-  let { done, value } = await reader.read();
-
-  for (let pos = 0; pos < value.length; ) {
-    const name = toString(value.subarray(pos + 0, pos + 100));
-    const size = toInteger(value.subarray(pos + 124, pos + 124 + 12));
-
-    if (Number.isNaN(size)) {
+  while (true) {
+    let { done, value } = await reader.read();
+    if (done) {
       break;
     }
 
-    console.log(pos, name, size);
+    for (let pos = 0; pos < value.length; ) {
+      const name = toString(value.subarray(pos + 0, pos + 100));
+      const size = toInteger(value.subarray(pos + 124, pos + 124 + 12));
 
-    const stream = new ReadableStream({
-      start() {},
-      cancel() {},
+      if (Number.isNaN(size)) {
+        break;
+      }
 
-      async pull(controller) {
-        /*
+      console.log(pos, name, size);
+
+      const stream = new ReadableStream({
+        start() {},
+        cancel() {},
+
+        async pull(controller) {
+          /*
           controller.close();
         */
-        controller.enqueue(value.subarray(pos + BLOCKSIZE, pos + BLOCKSIZE + size));
-      },
-    });
+          controller.enqueue(
+            value.subarray(pos + BLOCKSIZE, pos + BLOCKSIZE + size)
+          );
+        }
+      });
 
-    // console.log(size, overflow(size));
+      // console.log(size, overflow(size));
 
-    yield { name, size, stream };
+      yield { name, size, stream };
 
-    pos += BLOCKSIZE + size + overflow(size);
+      pos += BLOCKSIZE + size + overflow(size);
+    }
   }
 }
 
