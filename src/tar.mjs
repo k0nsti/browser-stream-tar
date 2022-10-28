@@ -37,6 +37,7 @@ export async function* entries(tar) {
       return false;
     }
     const newBuffer = new Uint8Array(buffer.length + value.length);
+    console.log("FILLBUFFER", buffer.length, value.length);
     newBuffer.set(buffer);
     newBuffer.set(value);
     buffer = newBuffer;
@@ -45,32 +46,49 @@ export async function* entries(tar) {
   }
 
   while (true) {
-    if (!(await fillBuffer())) {
+    if ((await fillBuffer())) {
       break;
     }
 
     while (buffer.length >= BLOCKSIZE) {
       const name = toString(buffer.subarray(0, 100));
       const size = toInteger(buffer.subarray(124, 124 + 12));
-
+      console.log("start header", buffer.length, name, size);
       if (Number.isNaN(size)) {
         break;
       }
 
-      console.log(name, size);
+      //console.log(name, size);
 
       const stream = new ReadableStream({
         start() {},
         cancel() {},
 
         async pull(controller) {
-          controller.enqueue(buffer.subarray(BLOCKSIZE, BLOCKSIZE + size));
-        }
+          let remaining = size;
+          while (remaining > 0) {
+            if (buffer.length - BLOCKSIZE > remaining) {
+              console.log("return daten wenn buffer größer als nötig ist", remaining);
+              controller.enqueue(
+                buffer.subarray(BLOCKSIZE, BLOCKSIZE + remaining)
+              );
+              remaining = remaining - buffer.length;
+              buffer = buffer.subarray(
+                BLOCKSIZE + remaining + overflow(remaining)
+              );
+            } else {
+              console.log("return daten wenn buffer kleiner als nötig ist", remaining);
+              remaining = remaining - buffer.length;
+              controller.enqueue(buffer.subarray(BLOCKSIZE));
+              buffer = new Uint8Array();
+            }
+          }
+        },
       });
 
       yield { name, size, stream };
 
-      buffer = buffer.subarray(BLOCKSIZE + size + overflow(size));
+      //buffer = buffer.subarray(BLOCKSIZE + size + overflow(size));
     }
   }
 }
