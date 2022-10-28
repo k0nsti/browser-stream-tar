@@ -31,17 +31,23 @@ export async function* entries(tar) {
 
   let buffer = new Uint8Array();
 
-  while (true) {
+  async function fillBuffer() {
     let { done, value } = await reader.read();
     if (done) {
-      break;
+      return false;
     }
-
     const newBuffer = new Uint8Array(buffer.length + value.length);
-
     newBuffer.set(buffer);
     newBuffer.set(value);
     buffer = newBuffer;
+
+    return true;
+  }
+
+  while (true) {
+    if (!(await fillBuffer())) {
+      break;
+    }
 
     while (buffer.length >= BLOCKSIZE) {
       const name = toString(buffer.subarray(0, 100));
@@ -58,9 +64,7 @@ export async function* entries(tar) {
         cancel() {},
 
         async pull(controller) {
-          controller.enqueue(
-            buffer.subarray(BLOCKSIZE, BLOCKSIZE + size)
-          );
+          controller.enqueue(buffer.subarray(BLOCKSIZE, BLOCKSIZE + size));
         }
       });
 
