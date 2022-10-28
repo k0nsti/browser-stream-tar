@@ -2,6 +2,7 @@ import test from "ava";
 import { createReadStream } from "node:fs";
 import { Readable } from "node:stream";
 import { assertTarStreamEntries } from "./assertions.mjs";
+import {readControlChunkSize} from "./util.mjs"
 
 test("entry", async t => {
   const nodeStream = createReadStream(
@@ -10,5 +11,7 @@ test("entry", async t => {
 
   // @see https://exploringjs.com/nodejs-shell-scripting/ch_web-streams.html
 
-  await assertTarStreamEntries(t, Readable.toWeb(nodeStream));
+//await assertTarStreamEntries(t, Readable.toWeb(nodeStream));
+
+await assertTarStreamEntries(t, await readControlChunkSize(Readable.toWeb(nodeStream),1000));
 });
