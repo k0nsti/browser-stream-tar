@@ -29,41 +29,44 @@ const BLOCKSIZE = 512;
 export async function* entries(tar) {
   const reader = tar.getReader();
 
+  let buffer = new Uint8Array();
+
   while (true) {
     let { done, value } = await reader.read();
     if (done) {
       break;
     }
 
-    for (let pos = 0; pos < value.length; ) {
-      const name = toString(value.subarray(pos + 0, pos + 100));
-      const size = toInteger(value.subarray(pos + 124, pos + 124 + 12));
+    const newBuffer = new Uint8Array(buffer.length + value.length);
+
+    newBuffer.set(buffer);
+    newBuffer.set(value);
+    buffer = newBuffer;
+
+    while (buffer.length >= BLOCKSIZE) {
+      const name = toString(buffer.subarray(0, 100));
+      const size = toInteger(buffer.subarray(124, 124 + 12));
 
       if (Number.isNaN(size)) {
         break;
       }
 
-      console.log(pos, name, size);
+      console.log(name, size);
 
       const stream = new ReadableStream({
         start() {},
         cancel() {},
 
         async pull(controller) {
-          /*
-          controller.close();
-        */
           controller.enqueue(
-            value.subarray(pos + BLOCKSIZE, pos + BLOCKSIZE + size)
+            buffer.subarray(BLOCKSIZE, BLOCKSIZE + size)
           );
         }
       });
 
-      // console.log(size, overflow(size));
-
       yield { name, size, stream };
 
-      pos += BLOCKSIZE + size + overflow(size);
+      buffer = buffer.subarray(BLOCKSIZE + size + overflow(size));
     }
   }
 }
