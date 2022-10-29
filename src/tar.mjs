@@ -39,21 +39,25 @@ export async function* entries(tar) {
     const newBuffer = new Uint8Array(buffer.length + value.length);
     console.log("FILLBUFFER", buffer.length, value.length);
     newBuffer.set(buffer);
+    console.log('1')
     newBuffer.set(value);
     buffer = newBuffer;
-
+console.log("finish fill buffer")
     return true;
   }
 
   while (true) {
-    if ((await fillBuffer())) {
+    console.log('bla')
+    if (!(await fillBuffer())) {
+      console.log("finish fill")
       break;
     }
-
+console.log('xxxx')
     while (buffer.length >= BLOCKSIZE) {
+      console.log("start header", buffer.length);
       const name = toString(buffer.subarray(0, 100));
       const size = toInteger(buffer.subarray(124, 124 + 12));
-      console.log("start header", buffer.length, name, size);
+      console.log("header size", buffer.length, name, size);
       if (Number.isNaN(size)) {
         break;
       }

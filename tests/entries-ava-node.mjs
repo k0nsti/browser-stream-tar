@@ -13,5 +13,5 @@ test("entry", async t => {
 
 //await assertTarStreamEntries(t, Readable.toWeb(nodeStream));
 
-await assertTarStreamEntries(t, await readControlChunkSize(Readable.toWeb(nodeStream),513));
+await assertTarStreamEntries(t, await readControlChunkSize(Readable.toWeb(nodeStream),300));
 });
