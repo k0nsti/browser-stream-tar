@@ -1,6 +1,11 @@
 import { entries } from "browser-stream-tar";
 
-export async function assertTarStreamEntries(t, stream) {
+export async function assertTarStreamEntries(
+  t,
+  stream,
+  entryNames = [],
+  getEntry = async name => {}
+) {
   const e = [
     {
       name: "a.txt",
