@@ -37,9 +37,8 @@ export async function* entries(tar) {
       return false;
     }
     const newBuffer = new Uint8Array(buffer.length + value.length);
-    console.log("FILLBUFFER", buffer.length, value.length);
+    console.log("######################FILLBUFFER", buffer.length, value.length);
     newBuffer.set(buffer);
-    console.log('1')
     newBuffer.set(value);
     buffer = newBuffer;
 console.log("finish fill buffer")
@@ -47,12 +46,9 @@ console.log("finish fill buffer")
   }
 
   while (true) {
-    console.log('bla')
     if (!(await fillBuffer())) {
-      console.log("finish fill")
       break;
     }
-console.log('xxxx')
     while (buffer.length >= BLOCKSIZE) {
       console.log("start header", buffer.length);
       const name = toString(buffer.subarray(0, 100));
@@ -90,6 +86,7 @@ console.log('xxxx')
         },
       });
 
+      console.log(`++++++yield| name: ${name} size: ${size}`)
       yield { name, size, stream };
 
       //buffer = buffer.subarray(BLOCKSIZE + size + overflow(size));
