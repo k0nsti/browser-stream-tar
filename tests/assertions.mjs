@@ -44,4 +44,5 @@ export async function assertTarStreamEntries(
     t.deepEqual(value, e[i].content);
     i++;
   }
+  t.is(i,entryNames.length)
 }

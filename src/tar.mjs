@@ -31,22 +31,9 @@ export async function* entries(tar) {
 
   let buffer = new Uint8Array();
 
-  async function fillBuffer() {
-    let { done, value } = await reader.read();
-    if (done) {
-      return false;
-    }
-    const newBuffer = new Uint8Array(buffer.length + value.length);
-    console.log("######################FILLBUFFER", buffer.length, value.length);
-    newBuffer.set(buffer);
-    newBuffer.set(value);
-    buffer = newBuffer;
-console.log("finish fill buffer")
-    return true;
-  }
-
   while (true) {
-    if (!(await fillBuffer())) {
+    buffer = await fillBuffer(buffer, reader);
+    if (!buffer) {
       break;
     }
     while (buffer.length >= BLOCKSIZE) {
@@ -65,19 +52,38 @@ console.log("finish fill buffer")
         cancel() {},
 
         async pull(controller) {
+          console.log("pulllllllllllllllll");
           let remaining = size;
           while (remaining > 0) {
             if (buffer.length - BLOCKSIZE > remaining) {
-              console.log("return daten wenn buffer größer als nötig ist", remaining);
+              console.log(
+                "return daten wenn buffer größer als nötig ist",
+                remaining
+              );
               controller.enqueue(
                 buffer.subarray(BLOCKSIZE, BLOCKSIZE + remaining)
               );
-              remaining = remaining - buffer.length;
+              //
+              console.log(
+                "remaining",
+                remaining,
+                "overflow",
+                overflow(remaining),
+                "buffer länge",
+                buffer.length,
+                "buffer.subarray:",
+                BLOCKSIZE + remaining + overflow(remaining)
+              );
               buffer = buffer.subarray(
                 BLOCKSIZE + remaining + overflow(remaining)
               );
+              remaining = 0;
+              controller.close();
             } else {
-              console.log("return daten wenn buffer kleiner als nötig ist", remaining);
+              console.log(
+                "return daten wenn buffer kleiner als nötig ist",
+                remaining
+              );
               remaining = remaining - buffer.length;
               controller.enqueue(buffer.subarray(BLOCKSIZE));
               buffer = new Uint8Array();
@@ -86,7 +92,7 @@ console.log("finish fill buffer")
         },
       });
 
-      console.log(`++++++yield| name: ${name} size: ${size}`)
+      console.log(`++++++yield| name: ${name} size: ${size}`);
       yield { name, size, stream };
 
       //buffer = buffer.subarray(BLOCKSIZE + size + overflow(size));
@@ -109,4 +115,20 @@ export function toInteger(bytes) {
 function overflow(size) {
   size &= BLOCKSIZE - 1;
   return size && BLOCKSIZE - size;
+}
+
+export async function fillBuffer(buffer, reader) {
+  let { done, value } = await reader.read();
+  if (done) {
+    return undefined;
+  }
+  const newBuffer = new Uint8Array(buffer.length + value.length);
+  console.log("######################FILLBUFFER", buffer.length, value.length);
+  console.log(String.fromCharCode(buffer[0], buffer[1], buffer[2]));
+  newBuffer.set(buffer);
+  newBuffer.set(value,buffer.length);
+  buffer = newBuffer;
+  console.log("finish fill buffer");
+  console.log(String.fromCharCode(buffer[0], buffer[1], buffer[2]));
+  return buffer;
 }
