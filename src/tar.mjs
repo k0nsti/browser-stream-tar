@@ -89,7 +89,7 @@ export async function* entries(tar) {
               buffer = new Uint8Array();
             }
           }
-        },
+        }
       });
 
       console.log(`++++++yield| name: ${name} size: ${size}`);
@@ -126,9 +126,8 @@ export async function fillBuffer(buffer, reader) {
   console.log("######################FILLBUFFER", buffer.length, value.length);
   console.log(String.fromCharCode(buffer[0], buffer[1], buffer[2]));
   newBuffer.set(buffer);
-  newBuffer.set(value,buffer.length);
-  buffer = newBuffer;
+  newBuffer.set(value, buffer.length);
   console.log("finish fill buffer");
   console.log(String.fromCharCode(buffer[0], buffer[1], buffer[2]));
-  return buffer;
+  return newBuffer;
 }
