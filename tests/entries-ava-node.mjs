@@ -5,7 +5,7 @@ import { assertTarStreamEntries } from "./assertions.mjs";
 import { readControlChunkSize } from "./util.mjs";
 
 
-test.only("entry", async (t) => {
+test("entry", async (t) => {
   const nodeStream = createReadStream(
     new URL("fixtures/test.tar", import.meta.url).pathname
   );
