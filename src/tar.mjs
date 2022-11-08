@@ -41,6 +41,7 @@ export async function* entries(tar) {
       const name = toString(buffer.subarray(0, 100));
       const size = toInteger(buffer.subarray(124, 124 + 12));
       console.log("header size", buffer.length, name, size);
+      buffer = buffer.subarray(BLOCKSIZE);
       if (Number.isNaN(size)) {
         break;
       }
@@ -54,14 +55,12 @@ export async function* entries(tar) {
         async pull(controller) {
           let remaining = size;
           while (remaining > 0) {
-            if (buffer.length - BLOCKSIZE > remaining) {
+            if (buffer.length > remaining) {
               console.log(
                 "return daten wenn buffer größer als nötig ist",
                 remaining
               );
-              controller.enqueue(
-                buffer.subarray(BLOCKSIZE, BLOCKSIZE + remaining)
-              );
+              controller.enqueue(buffer.subarray(0, remaining));
               //
               console.log(
                 "remaining",
@@ -71,11 +70,11 @@ export async function* entries(tar) {
                 "buffer länge",
                 buffer.length,
                 "buffer.subarray:",
-                BLOCKSIZE + remaining + overflow(remaining)
+                remaining + overflow(remaining)
               );
-              buffer = buffer.subarray(
-                BLOCKSIZE + remaining + overflow(remaining)
-              );
+
+              buffer = await skip(buffer, reader, remaining + overflow(remaining));
+
               remaining = 0;
               controller.close();
             } else {
@@ -84,7 +83,7 @@ export async function* entries(tar) {
                 remaining
               );
               remaining = remaining - buffer.length;
-              controller.enqueue(buffer.subarray(BLOCKSIZE));
+              controller.enqueue(buffer);
               buffer = new Uint8Array();
             }
           }
@@ -126,6 +125,13 @@ export async function fillBuffer(buffer, reader) {
   newBuffer.set(buffer);
   newBuffer.set(value, buffer.length);
   console.log("finish fill buffer");
-  console.log('xxxxxxxxxxxxx',toString(newBuffer))
+  console.log("xxxxxxxxxxxxx", toString(newBuffer));
   return newBuffer;
+}
+
+export async function skip(buffer, reader, length) {
+  while (buffer.length <= length) {
+    buffer = await fillBuffer(buffer, reader);
+  }
+  return buffer.subarray(length);
 }
