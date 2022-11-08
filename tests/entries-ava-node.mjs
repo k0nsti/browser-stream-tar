@@ -4,8 +4,7 @@ import { Readable } from "node:stream";
 import { assertTarStreamEntries } from "./assertions.mjs";
 import { readControlChunkSize } from "./util.mjs";
 
-
-test("entry", async (t) => {
+test("entry", async t => {
   const nodeStream = createReadStream(
     new URL("fixtures/test.tar", import.meta.url).pathname
   );
@@ -14,11 +13,11 @@ test("entry", async (t) => {
 
   await assertTarStreamEntries(
     t,
-    await readControlChunkSize(Readable.toWeb(nodeStream), 1200),
+    await readControlChunkSize(Readable.toWeb(nodeStream), 30),
     ["a.txt", "b.csv", "z.doc"],
-    async (name) =>
-      createReadStream(new URL("fixtures/" + name, import.meta.url).pathname)
+    async name =>
+      Readable.toWeb(
+        createReadStream(new URL("fixtures/" + name, import.meta.url).pathname)
+      )
   );
 });
-
-

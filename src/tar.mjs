@@ -44,33 +44,18 @@ export async function* entries(tar) {
     const stream = new ReadableStream({
       async pull(controller) {
         let remaining = size;
-        while (remaining > 0) {
-          if (buffer.length > remaining) {
-            console.log(
-              "return daten wenn buffer größer als nötig ist",
-              remaining
-            );
-            controller.enqueue(buffer.subarray(0, remaining));
-
-            buffer = await skip(
-              reader,
-              buffer,
-              remaining + overflow(remaining)
-            );
-            
-            controller.close();
-
-            return;
-          } else {
-            console.log(
-              "return daten wenn buffer kleiner als nötig ist",
-              remaining
-            );
-            remaining = remaining - buffer.length;
-            controller.enqueue(buffer);
-            buffer = undefined;
-          }
+        while (remaining > buffer.length) {
+          console.log(remaining, buffer.length);
+          remaining = remaining - buffer.length;
+          controller.enqueue(buffer);
+          buffer = await fill(reader);
         }
+
+        controller.enqueue(buffer.subarray(0, remaining));
+
+        buffer = await skip(reader, buffer, remaining + overflow(remaining));
+
+        controller.close();
       }
     });
 
