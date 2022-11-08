@@ -4,7 +4,39 @@ import { Readable } from "node:stream";
 import { fill, toString } from "../src/tar.mjs";
 import { readControlChunkSize } from "./util.mjs";
 
-test("fill only file", async t => {
+test("fill once", async t => {
+  const nodeStream = createReadStream(
+    new URL("fixtures/a.txt", import.meta.url).pathname
+  );
+
+  const reader = (
+    await readControlChunkSize(Readable.toWeb(nodeStream), 5)
+  ).getReader();
+
+  t.deepEqual(
+    await fill(reader, undefined, 20),
+    new Uint8Array([
+      0x64, 0x61, 0x73, 0x20, 0x69, 0x73, 0x74, 0x20, 0x65, 0x69, 0x6e, 0x65,
+      0x20, 0x54, 0x65, 0x78, 0x74, 0x20, 0x44, 0x61
+    ])
+  );
+});
+
+test("fill already filled", async t => {
+  const unusedReader = {};
+
+  const buffer = new Uint8Array([
+    0x64, 0x61, 0x73, 0x20, 0x69, 0x73, 0x74, 0x20, 0x65, 0x69, 0x6e, 0x65,
+    0x20, 0x54, 0x65, 0x78, 0x74, 0x20, 0x44, 0x61
+  ]);
+
+  t.deepEqual(
+    await fill(unusedReader, buffer, buffer.length),
+    buffer
+  );
+});
+
+test("fill step by step", async t => {
   const nodeStream = createReadStream(
     new URL("fixtures/a.txt", import.meta.url).pathname
   );
@@ -53,7 +85,7 @@ test("fill only file", async t => {
     ])
   );
 
-  t.true(await fill(reader, buffer) === undefined);
+  t.true((await fill(reader, buffer)) === undefined);
 });
 
 test.skip("fill tar", async t => {
