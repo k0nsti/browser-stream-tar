@@ -34,7 +34,7 @@ export async function* entries(tar) {
   while ((buffer = await fill(reader, buffer, BLOCKSIZE)) && buffer[0] !== 0) {
     const name = toString(buffer.subarray(0, 100));
     const size = toInteger(buffer.subarray(124, 124 + 12));
-    console.log(">", name, size);
+    console.log(name, "header", size);
 
     buffer = buffer.subarray(BLOCKSIZE);
 
@@ -42,15 +42,24 @@ export async function* entries(tar) {
       async pull(controller) {
         let remaining = size;
         while (remaining > buffer.length) {
-          console.log(remaining, buffer.length);
           remaining = remaining - buffer.length;
+          console.log(name, "enqueue", buffer.length, "remaining", remaining);
           controller.enqueue(buffer);
           buffer = await fill(reader);
         }
 
+        console.log(name, "enqueue", remaining);
+
         controller.enqueue(buffer.subarray(0, remaining));
 
         buffer = await skip(reader, buffer, remaining + overflow(remaining));
+
+        console.log(
+          name,
+          "present",
+          buffer.length,
+          String.fromCharCode(buffer[0], buffer[1], buffer[2])
+        );
 
         controller.close();
       }
