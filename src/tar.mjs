@@ -52,7 +52,6 @@ export async function* entries(tar) {
         cancel() {},
 
         async pull(controller) {
-          console.log("pulllllllllllllllll");
           let remaining = size;
           while (remaining > 0) {
             if (buffer.length - BLOCKSIZE > remaining) {
@@ -124,10 +123,9 @@ export async function fillBuffer(buffer, reader) {
   }
   const newBuffer = new Uint8Array(buffer.length + value.length);
   console.log("######################FILLBUFFER", buffer.length, value.length);
-  console.log(String.fromCharCode(buffer[0], buffer[1], buffer[2]));
   newBuffer.set(buffer);
   newBuffer.set(value, buffer.length);
   console.log("finish fill buffer");
-  console.log(String.fromCharCode(buffer[0], buffer[1], buffer[2]));
+  console.log('xxxxxxxxxxxxx',toString(newBuffer))
   return newBuffer;
 }

@@ -1,5 +1,8 @@
 import test from "ava";
-import { fillBuffer } from "../src/tar.mjs";
+import { createReadStream } from "node:fs";
+import { Readable } from "node:stream";
+import { fillBuffer,toString } from "../src/tar.mjs";
+import { readControlChunkSize } from "./util.mjs";
 
 test("fillBuffer only file", async (t) => {
   const nodeStream = createReadStream(
@@ -62,6 +65,24 @@ test("fillBuffer only file", async (t) => {
   );
 });
 
-test("fillBuffer tar", async (t) => {
+test.skip("fillBuffer tar", async (t) => {
+
+  const nodeStream = createReadStream(
+    new URL("fixtures/test.tar", import.meta.url).pathname
+  );
+
+  let buffer = new Uint8Array();
+  const reader = (await readControlChunkSize(
+    Readable.toWeb(nodeStream),
+    5
+  )).getReader();
+
+  buffer = await fillBuffer(buffer, reader);
+
+  console.log("#######",toString(buffer),"#####")
+
+  buffer = await fillBuffer(buffer, reader);
+
+  console.log("#######",toString(buffer),"#####")
 
 });
