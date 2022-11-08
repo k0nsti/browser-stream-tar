@@ -31,13 +31,10 @@ export async function* entries(tar) {
 
   let buffer;
 
-  while ((buffer = await fill(reader, buffer, BLOCKSIZE))) {
+  while ((buffer = await fill(reader, buffer, BLOCKSIZE)) && buffer[0] !== 0) {
     const name = toString(buffer.subarray(0, 100));
     const size = toInteger(buffer.subarray(124, 124 + 12));
-    console.log("header", name, size);
-    if (Number.isNaN(size)) {
-      break;
-    }
+    console.log(">", name, size);
 
     buffer = buffer.subarray(BLOCKSIZE);
 
@@ -81,7 +78,7 @@ function overflow(size) {
 }
 
 /**
- * Read some more bytes from the reader and append them to a given buffer until a request length of the buffer is reached
+ * Read more bytes from the reader and append them to a given buffer until a request length of the buffer is reached
  * @param {ReadableStreamReader} reader where to read from
  * @param {UInt8Array} buffer initial buffer of undefined
  * @param {Number} length desired buffer length
