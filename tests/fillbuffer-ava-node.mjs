@@ -9,7 +9,7 @@ test("fillBuffer only file", async t => {
     new URL("fixtures/a.txt", import.meta.url).pathname
   );
 
-  let buffer = new Uint8Array();
+  let buffer;
   const reader = (
     await readControlChunkSize(Readable.toWeb(nodeStream), 5)
   ).getReader();

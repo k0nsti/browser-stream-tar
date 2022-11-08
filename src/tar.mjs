@@ -29,7 +29,7 @@ const BLOCKSIZE = 512;
 export async function* entries(tar) {
   const reader = tar.getReader();
 
-  let buffer = new Uint8Array();
+  let buffer;
 
   while (true) {
     buffer = await fillBuffer(buffer, reader);
@@ -46,12 +46,7 @@ export async function* entries(tar) {
         break;
       }
 
-      //console.log(name, size);
-
       const stream = new ReadableStream({
-        start() {},
-        cancel() {},
-
         async pull(controller) {
           let remaining = size;
           while (remaining > 0) {
@@ -61,7 +56,8 @@ export async function* entries(tar) {
                 remaining
               );
               controller.enqueue(buffer.subarray(0, remaining));
-              //
+              controller.close();
+
               console.log(
                 "remaining",
                 remaining,
@@ -73,10 +69,13 @@ export async function* entries(tar) {
                 remaining + overflow(remaining)
               );
 
-              buffer = await skip(buffer, reader, remaining + overflow(remaining));
+              buffer = await skip(
+                buffer,
+                reader,
+                remaining + overflow(remaining)
+              );
 
-              remaining = 0;
-              controller.close();
+              return;
             } else {
               console.log(
                 "return daten wenn buffer kleiner als nötig ist",
@@ -84,7 +83,7 @@ export async function* entries(tar) {
               );
               remaining = remaining - buffer.length;
               controller.enqueue(buffer);
-              buffer = new Uint8Array();
+              buffer = undefined;
             }
           }
         }
@@ -92,8 +91,6 @@ export async function* entries(tar) {
 
       console.log(`++++++yield| name: ${name} size: ${size}`);
       yield { name, size, stream };
-
-      //buffer = buffer.subarray(BLOCKSIZE + size + overflow(size));
     }
   }
 }
@@ -115,18 +112,28 @@ function overflow(size) {
   return size && BLOCKSIZE - size;
 }
 
+/**
+ * Read some more bytes from the reader and append them to a given buffer
+ * @param {UInt8Array} buffer initial buffer of undefined
+ * @param {ReadableStreamReader} reader where to read from
+ * @returns {UInt8Array} filled up buffer
+ */
 export async function fillBuffer(buffer, reader) {
   let { done, value } = await reader.read();
   if (done) {
     return undefined;
   }
-  const newBuffer = new Uint8Array(buffer.length + value.length);
-  console.log("######################FILLBUFFER", buffer.length, value.length);
-  newBuffer.set(buffer);
-  newBuffer.set(value, buffer.length);
-  console.log("finish fill buffer");
-  console.log("xxxxxxxxxxxxx", toString(newBuffer));
-  return newBuffer;
+
+  console.log("######################FILLBUFFER", value.length);
+
+  if (buffer === undefined) {
+    return value;
+  } else {
+    const newBuffer = new Uint8Array(buffer.length + value.length);
+    newBuffer.set(buffer);
+    newBuffer.set(value, buffer.length);
+    return newBuffer;
+  }
 }
 
 export async function skip(buffer, reader, length) {
