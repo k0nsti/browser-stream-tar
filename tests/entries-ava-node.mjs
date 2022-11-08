@@ -14,7 +14,7 @@ test("entry", async (t) => {
 
   await assertTarStreamEntries(
     t,
-    await readControlChunkSize(Readable.toWeb(nodeStream), 300),
+    await readControlChunkSize(Readable.toWeb(nodeStream), 1200),
     ["a.txt", "b.csv", "z.doc"],
     async (name) =>
       createReadStream(new URL("fixtures/" + name, import.meta.url).pathname)

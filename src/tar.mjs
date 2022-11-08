@@ -31,11 +31,7 @@ export async function* entries(tar) {
 
   let buffer;
 
-  while (true) {
-    buffer = await fill(reader, buffer);
-    if (!buffer) {
-      break;
-    }
+  while ((buffer = await fill(reader, buffer))) {
     while (buffer.length >= BLOCKSIZE) {
       console.log("start header", buffer.length);
       const name = toString(buffer.subarray(0, 100));
@@ -139,8 +135,8 @@ export async function fill(reader, buffer) {
 /**
  * Skip some bytes from a buffer
  * @param {ReadableStreamReader} reader where to read from
- * @param {Uint8Array} buffer 
- * @param {Number} length 
+ * @param {Uint8Array} buffer
+ * @param {Number} length
  * @returns {UInt8Array} buffer filled after skipped bytes
  */
 export async function skip(reader, buffer, length) {
