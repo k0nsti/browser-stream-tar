@@ -32,7 +32,7 @@ export async function* entries(tar) {
   let buffer;
 
   while (true) {
-    buffer = await fillBuffer(buffer, reader);
+    buffer = await fill(reader, buffer);
     if (!buffer) {
       break;
     }
@@ -70,8 +70,8 @@ export async function* entries(tar) {
               );
 
               buffer = await skip(
-                buffer,
                 reader,
+                buffer,
                 remaining + overflow(remaining)
               );
 
@@ -114,17 +114,17 @@ function overflow(size) {
 
 /**
  * Read some more bytes from the reader and append them to a given buffer
- * @param {UInt8Array} buffer initial buffer of undefined
  * @param {ReadableStreamReader} reader where to read from
+ * @param {UInt8Array} buffer initial buffer of undefined
  * @returns {UInt8Array} filled up buffer
  */
-export async function fillBuffer(buffer, reader) {
+export async function fill(reader, buffer) {
   let { done, value } = await reader.read();
   if (done) {
     return undefined;
   }
 
-  console.log("######################FILLBUFFER", value.length);
+  console.log("######################FILL", value.length);
 
   if (buffer === undefined) {
     return value;
@@ -136,9 +136,16 @@ export async function fillBuffer(buffer, reader) {
   }
 }
 
-export async function skip(buffer, reader, length) {
+/**
+ * Skip some bytes from a buffer
+ * @param {ReadableStreamReader} reader where to read from
+ * @param {Uint8Array} buffer 
+ * @param {Number} length 
+ * @returns {UInt8Array} buffer filled after skipped bytes
+ */
+export async function skip(reader, buffer, length) {
   while (buffer.length <= length) {
-    buffer = await fillBuffer(buffer, reader);
+    buffer = await fill(reader, buffer);
   }
   return buffer.subarray(length);
 }
