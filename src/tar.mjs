@@ -58,7 +58,13 @@ export async function* entries(tar) {
           name,
           "present",
           buffer.length,
-          String.fromCharCode(buffer[0], buffer[1], buffer[2])
+          String.fromCharCode(
+            buffer[0],
+            buffer[1],
+            buffer[2],
+            buffer[3],
+            buffer[4]
+          )
         );
 
         controller.close();
