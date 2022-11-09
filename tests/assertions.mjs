@@ -12,7 +12,12 @@ export async function assertTarStreamEntries(
 
     const s = await getEntry(entry.name);
 
-    await compareReadables(t, s.getReader(), entry.stream.getReader(), `[${i}].stream`);
+    await compareReadables(
+      t,
+      s.getReader(),
+      entry.stream.getReader(),
+      `[${i}].stream`
+    );
     i++;
   }
   t.is(i, entryNames.length);
@@ -38,7 +43,6 @@ async function readAll(reader) {
 }
 
 async function compareReadables(t, a, b, message) {
-  const av = await readAll(a);
-  const bv = await readAll(b);
+  const [av, bv] = await Promise.all([readAll(a), readAll(b)]);
   t.deepEqual(av, bv, message);
 }
