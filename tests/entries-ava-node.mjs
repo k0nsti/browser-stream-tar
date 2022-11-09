@@ -4,7 +4,7 @@ import { Readable } from "node:stream";
 import { assertTarStreamEntries } from "./assertions.mjs";
 import { readControlChunkSize } from "./util.mjs";
 
-async function entryWithChunksSize(t,size) {
+async function entryWithChunksSize(t, size) {
   const nodeStream = createReadStream(
     new URL("fixtures/test.tar", import.meta.url).pathname
   );
@@ -22,7 +22,7 @@ async function entryWithChunksSize(t,size) {
   );
 }
 
-entryWithChunksSize.title=(providedTitle="xx",size)=>`entries <${size}>`;
+entryWithChunksSize.title = (providedTitle, size) => `entries <${size}>`;
 
-test(entryWithChunksSize, 30);
-//test(entryWithChunksSize, 200);
+//test(entryWithChunksSize, 30);
+test(entryWithChunksSize, 31);
