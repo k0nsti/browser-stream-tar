@@ -4,20 +4,19 @@ export async function assertTarStreamEntries(
   t,
   stream,
   entryNames = [],
-  getEntry = async name => {}
+  entryStream = async name => {}
 ) {
   let i = 0;
   for await (const entry of entries(stream)) {
     t.is(entry.name, entryNames[i], `[${i}].name`);
 
-    const s = await getEntry(entry.name);
-
     await compareReadables(
       t,
-      s.getReader(),
+      (await entryStream(entry.name)).getReader(),
       entry.stream.getReader(),
       `[${i}].stream`
     );
+
     i++;
   }
   t.is(i, entryNames.length);
