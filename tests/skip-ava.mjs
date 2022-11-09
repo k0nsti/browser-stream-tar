@@ -9,6 +9,7 @@ test("skip zero", async t => {
     new Uint8Array([0x00, 0x01])
   );
 });
+
 test("skip some without refill", async t => {
   const dummyReader = {};
 

@@ -105,7 +105,7 @@ export async function fill(reader, buffer, length) {
   }
 
   do {
-    let { done, value } = await reader.read();
+    const { done, value } = await reader.read();
     if (done) {
       return undefined;
     }
