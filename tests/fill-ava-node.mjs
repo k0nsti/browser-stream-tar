@@ -88,7 +88,7 @@ test("fill step by step", async t => {
   t.true((await fill(reader, buffer)) === undefined);
 });
 
-test.skip("fill tar", async t => {
+test.only("fill tar", async t => {
   const nodeStream = createReadStream(
     new URL("fixtures/test.tar", import.meta.url).pathname
   );
