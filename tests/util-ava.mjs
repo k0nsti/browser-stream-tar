@@ -9,9 +9,9 @@ test("decode integer", t => {
   t.is(toInteger(new Uint8Array([0x32, 0x31])), 17);
 });
 
-test("overflow", t=> {
-  t.is(overflow(23), 489)
-  t.is(overflow( 512 + 23), 489)
-  t.is(overflow(511), 1)
-  t.is(overflow(513), 511)
-})
+test("overflow", t => {
+  t.is(overflow(23), 489);
+  t.is(overflow(512 + 23), 489);
+  t.is(overflow(511), 1);
+  t.is(overflow(513), 511);
+});
