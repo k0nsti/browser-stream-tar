@@ -37,7 +37,6 @@ export async function* entries(tar) {
     //console.log(name, "header", size);
 
     buffer = buffer.subarray(BLOCKSIZE);
-console.log('buffer.length', buffer.length)
     const stream = new ReadableStream({
       async pull(controller) {
         let remaining = size;
@@ -57,7 +56,7 @@ console.log('buffer.length', buffer.length)
          *        A0   A0        A1
          * 
          */
-        console.log(name, "enqueue", remaining, "bufferLength", );
+        //console.log(name, "enqueue", remaining, "bufferLength", );
 
         controller.enqueue(buffer.subarray(0, remaining));
 
@@ -72,7 +71,7 @@ console.log('buffer.length', buffer.length)
          */                                 
         buffer = await skip(reader, buffer, remaining + overflow(size));
 
-        console.log("buffer text",toString(buffer))
+        //console.log("buffer text",toString(buffer))
        /* console.log(
           name,
           "present",
