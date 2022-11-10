@@ -41,7 +41,7 @@ console.log('buffer.length', buffer.length)
     const stream = new ReadableStream({
       async pull(controller) {
         let remaining = size;
-        while (remaining > buffer.length) {
+        while (remaining >= buffer.length) {
           remaining = remaining - buffer.length;
           //console.log(name, "enqueue", buffer.length, "remaining", remaining);
           controller.enqueue(buffer);
@@ -68,10 +68,11 @@ console.log('buffer.length', buffer.length)
          *  |         |             |            |
          * HDD ... DDDDDDDDDDDDDDDDDD------------HHHHHH
          *            [BUFFER .... ]
-         *                                       [BUFFER ... ]
+         *             --- skip --->             [BUFFER ... ]
          */                                 
         buffer = await skip(reader, buffer, remaining + overflow(size));
-console.log("buffer text",toString(buffer))
+
+        console.log("buffer text",toString(buffer))
        /* console.log(
           name,
           "present",
