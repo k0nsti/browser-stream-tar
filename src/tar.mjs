@@ -34,7 +34,7 @@ export async function* entries(tar) {
   while ((buffer = await fill(reader, buffer, BLOCKSIZE)) && buffer[0] !== 0) {
     const name = toString(buffer.subarray(0, 100));
     const size = toInteger(buffer.subarray(124, 124 + 12));
-    console.log(name, "header", size);
+    //console.log(name, "header", size);
 
     buffer = buffer.subarray(BLOCKSIZE);
 
@@ -43,18 +43,27 @@ export async function* entries(tar) {
         let remaining = size;
         while (remaining > buffer.length) {
           remaining = remaining - buffer.length;
-          console.log(name, "enqueue", buffer.length, "remaining", remaining);
+          //console.log(name, "enqueue", buffer.length, "remaining", remaining);
           controller.enqueue(buffer);
           buffer = await fill(reader);
         }
 
-        console.log(name, "enqueue", remaining);
+        //console.log(name, "enqueue", remaining);
 
         controller.enqueue(buffer.subarray(0, remaining));
 
-        buffer = await skip(reader, buffer, remaining + overflow(remaining));
+        /**
+         * 
+         *  +--------- size --------+
+         *  |         +- remaining -+- overflow -+
+         *  |         |             |            |
+         * HDD ... DDDDDDDDDDDDDDDDDD------------HHHHHH
+         *            [BUFFER .... ]
+         *                                       [BUFFER ... ]
+         */                                 
+        buffer = await skip(reader, buffer, remaining + overflow(size));
 
-        console.log(
+       /* console.log(
           name,
           "present",
           buffer.length,
@@ -65,7 +74,7 @@ export async function* entries(tar) {
             buffer[3],
             buffer[4]
           )
-        );
+        );*/
 
         controller.close();
       }
