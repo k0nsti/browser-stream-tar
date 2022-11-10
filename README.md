@@ -8,4 +8,8 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Known Vulnerabilities](https://snyk.io/test/github/k0nsti/browser-stream-tar/badge.svg)](https://snyk.io/test/github/k0nsti/browser-stream-tar)
 [![Coverage Status](https://coveralls.io/repos/k0nsti/browser-stream-tar/badge.svg)](https://coveralls.io/github/k0nsti/browser-stream-tar)
+
 # browser-stream-tar
+
+extract tar entries from browser streams
+
