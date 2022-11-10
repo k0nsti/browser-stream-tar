@@ -67,23 +67,9 @@ export async function* entries(tar) {
          *  |         |             |            |
          * HDD ... DDDDDDDDDDDDDDDDDD------------HHHHHH
          *            [BUFFER .... ]
-         *             --- skip --->             [BUFFER ... ]
+         *             ----------- skip -------> [BUFFER ... ]
          */                                 
         buffer = await skip(reader, buffer, remaining + overflow(size));
-
-        //console.log("buffer text",toString(buffer))
-       /* console.log(
-          name,
-          "present",
-          buffer.length,
-          String.fromCharCode(
-            buffer[0],
-            buffer[1],
-            buffer[2],
-            buffer[3],
-            buffer[4]
-          )
-        );*/
 
         controller.close();
       }
@@ -111,7 +97,7 @@ export function overflow(size) {
 }
 
 /**
- * Read more bytes from the reader and append them to a given buffer until a request length of the buffer is reached
+ * Read bytes from a reader and append them to a given buffer until a requested length of the buffer is reached
  * @param {ReadableStreamReader} reader where to read from
  * @param {UInt8Array} buffer initial buffer of undefined
  * @param {Number} length desired buffer length
