@@ -22,9 +22,16 @@
 const BLOCKSIZE = 512;
 
 /**
- *
+ * @typedef {Object} TarStreamEntry
+ * @property {string} name
+ * @property {number} size
+ * @property {ReadableStream} stream
+ */
+
+/**
+ * Provide tar entry iterator.
  * @param {ReadableStream} tar
- * @return {AsyncIterator<Object>}
+ * @return {AsyncIterator<TarStreamEntry>}
  */
 export async function* entries(tar) {
   const reader = tar.getReader();
@@ -34,7 +41,6 @@ export async function* entries(tar) {
   while ((buffer = await fill(reader, buffer, BLOCKSIZE)) && buffer[0] !== 0) {
     const name = toString(buffer.subarray(0, 100));
     const size = toInteger(buffer.subarray(124, 124 + 12));
-    //console.log(name, "header", size);
 
     buffer = buffer.subarray(BLOCKSIZE);
     const stream = new ReadableStream({
@@ -61,13 +67,12 @@ export async function* entries(tar) {
         controller.enqueue(buffer.subarray(0, remaining));
 
         /**
-         * 
          *  +--------- size --------+
          *  |         +- remaining -+- overflow -+
          *  |         |             |            |
          * HDD ... DDDDDDDDDDDDDDDDDD------------HHHHHH
-         *            [BUFFER .... ]
-         *             ----------- skip -------> [BUFFER ... ]
+         *            [BUFFER .... ]             [BUFFER ... ]
+         *            +-----------  skip --------+
          */                                 
         buffer = await skip(reader, buffer, remaining + overflow(size));
 
@@ -76,9 +81,16 @@ export async function* entries(tar) {
     });
 
     yield { name, size, stream };
+
+    // TODO check if stream has been consumed when we reach this positon
   }
 }
 
+/**
+ * Convert bytes into string
+ * @param {UInt8Array} bytes 
+ * @returns {string}
+ */
 export function toString(bytes) {
   const chars = [];
   for (let i = 0; i < bytes.length && bytes[i] !== 0; ) {
@@ -87,6 +99,11 @@ export function toString(bytes) {
   return String.fromCharCode(...chars);
 }
 
+/**
+ * Convert ASCII octal number into number
+ * @param {UInt8Array} bytes 
+ * @returns {number}
+ */
 export function toInteger(bytes) {
   return parseInt(toString(bytes), 8);
 }
@@ -100,7 +117,7 @@ export function overflow(size) {
  * Read bytes from a reader and append them to a given buffer until a requested length of the buffer is reached
  * @param {ReadableStreamReader} reader where to read from
  * @param {UInt8Array} buffer initial buffer of undefined
- * @param {Number} length desired buffer length
+ * @param {number} length desired buffer length
  * @returns {UInt8Array} filled up buffer
  */
 export async function fill(reader, buffer, length) {
@@ -131,7 +148,7 @@ export async function fill(reader, buffer, length) {
  * Skip some bytes from a buffer
  * @param {ReadableStreamReader} reader where to read from
  * @param {Uint8Array} buffer
- * @param {Number} length
+ * @param {number} length
  * @returns {UInt8Array} buffer filled after skipped bytes
  */
 export async function skip(reader, buffer, length) {
