@@ -1,5 +1,10 @@
 import test from "ava";
-import { toString, toInteger, overflow } from "browser-stream-tar";
+import {
+  toString,
+  toInteger,
+  overflow,
+  decodeHeader
+} from "browser-stream-tar";
 
 test("decode string", t => {
   t.is(toString(new Uint8Array([65, 66, 67, 0])), "ABC");
@@ -14,4 +19,8 @@ test("overflow", t => {
   t.is(overflow(512 + 23), 489);
   t.is(overflow(511), 1);
   t.is(overflow(513), 511);
+});
+
+test("header zero", t => {
+  t.is(decodeHeader(new Uint8Array([0x0])), undefined);
 });
