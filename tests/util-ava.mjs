@@ -25,6 +25,14 @@ test("header empty", t => {
   t.is(decodeHeader(new Uint8Array([0x0])), undefined);
 });
 
+test("header unknown type", t => {
+  const buffer = new Uint8Array(512);
+  buffer[0] = 65; // todo should throw without
+  buffer[156] = 101;
+
+  t.throws(() => decodeHeader(buffer), { message: /Unsupported header type/ });
+});
+
 test("header plain file", t => {
   const buffer = new Uint8Array(512);
 
