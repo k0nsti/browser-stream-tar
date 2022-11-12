@@ -13,3 +13,17 @@
 
 extract tar entries from browser streams
 
+# API
+
+
+# install
+
+With [npm](http://npmjs.org) do:
+
+```shell
+npm install browser-stream-tar
+```
+
+# license
+
+BSD-2-Clause
