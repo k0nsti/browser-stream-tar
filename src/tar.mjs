@@ -29,6 +29,18 @@ const BLOCKSIZE = 512;
  */
 
 /**
+ * @param {UInt8Array} bytes
+ * @return {Object}
+ */
+export function decodeHeader(buffer) {
+  if (buffer[0] !== 0) {
+    const name = toString(buffer.subarray(0, 100));
+    const size = toInteger(buffer.subarray(124, 124 + 12));
+    return { name, size };
+  }
+}
+
+/**
  * Provide tar entry iterator.
  * @param {ReadableStream} tar
  * @return {AsyncIterator<TarStreamEntry>}
@@ -36,16 +48,17 @@ const BLOCKSIZE = 512;
 export async function* entries(tar) {
   const reader = tar.getReader();
 
-  let buffer;
+  let buffer, header;
 
-  while ((buffer = await fill(reader, buffer, BLOCKSIZE)) && buffer[0] !== 0) {
-    const name = toString(buffer.subarray(0, 100));
-    const size = toInteger(buffer.subarray(124, 124 + 12));
-
+  while (
+    (buffer = await fill(reader, buffer, BLOCKSIZE)) &&
+    (header = decodeHeader(buffer))
+  ) {
     buffer = buffer.subarray(BLOCKSIZE);
-    const stream = new ReadableStream({
+
+    header.stream = new ReadableStream({
       async pull(controller) {
-        let remaining = size;
+        let remaining = header.size;
         while (remaining >= buffer.length) {
           remaining = remaining - buffer.length;
           controller.enqueue(buffer);
@@ -59,10 +72,8 @@ export async function* entries(tar) {
          *  DDDDDDDDDDDD---------HHHH
          *        |    |         |
          *        A0   A0        A1
-         * 
+         *
          */
-        //console.log(name, "enqueue", remaining, "bufferLength", );
-
         controller.enqueue(buffer.subarray(0, remaining));
 
         /**
@@ -72,14 +83,14 @@ export async function* entries(tar) {
          * HDD ... DDDDDDDDDDDDDDDDDD------------HHHHHH
          *            [BUFFER .... ]             [BUFFER ... ]
          *            +-----------  skip --------+
-         */                                 
-        buffer = await skip(reader, buffer, remaining + overflow(size));
+         */
+        buffer = await skip(reader, buffer, remaining + overflow(header.size));
 
         controller.close();
       }
     });
 
-    yield { name, size, stream };
+    yield header;
 
     // TODO check if stream has been consumed when we reach this positon
   }
@@ -87,7 +98,7 @@ export async function* entries(tar) {
 
 /**
  * Convert bytes into string
- * @param {UInt8Array} bytes 
+ * @param {UInt8Array} bytes
  * @returns {string}
  */
 export function toString(bytes) {
@@ -100,7 +111,7 @@ export function toString(bytes) {
 
 /**
  * Convert ASCII octal number into number
- * @param {UInt8Array} bytes 
+ * @param {UInt8Array} bytes
  * @returns {number}
  */
 export function toInteger(bytes) {
