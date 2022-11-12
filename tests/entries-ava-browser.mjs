@@ -6,6 +6,8 @@ test("fetch entries", async t => {
     "https://raw.githubusercontent.com/k0nsti/browser-stream-tar/main/tests/fixtures/";
 
   for (const [name, entries] of Object.entries(tars)) {
+    t.log(name);
+    
     const response = await fetch(base + name);
 
     await assertTarStreamEntries(t, response.body, entries, async name => {
