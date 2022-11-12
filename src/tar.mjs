@@ -34,9 +34,17 @@ const BLOCKSIZE = 512;
  */
 export function decodeHeader(buffer) {
   if (buffer[0] !== 0) {
-    const name = toString(buffer.subarray(0, 100));
-    const size = toInteger(buffer.subarray(124, 124 + 12));
-    return { name, size };
+    switch (buffer[156]) {
+      case 0:
+      case 48:
+        const name = toString(buffer.subarray(0, 100));
+        const size = toInteger(buffer.subarray(124, 124 + 12));
+        return { name, size };
+
+      //case 72: // Pax
+
+      default: throw new Error(`Unsupported header type ${buffer[156]}`);
+    }
   }
 }
 
