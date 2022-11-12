@@ -1,7 +1,6 @@
 {
   "name": "browser-stream-tar",
   "version": "0.0.0-semantic-release",
-  "description": "extract tar entries from browser streams",
   "publishConfig": {
     "access": "public"
   },
@@ -9,9 +8,10 @@
   "exports": {
     ".": "./src/tar.mjs"
   },
+  "description": "extract tar entries from browser streams",
   "keywords": [
-    "tar",
-    "stream"
+    "stream",
+    "tar"
   ],
   "contributors": [
     {
