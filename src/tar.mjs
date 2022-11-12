@@ -48,7 +48,6 @@ export async function* entries(tar) {
         let remaining = size;
         while (remaining >= buffer.length) {
           remaining = remaining - buffer.length;
-          //console.log(name, "enqueue", buffer.length, "remaining", remaining);
           controller.enqueue(buffer);
           buffer = await fill(reader);
         }
