@@ -3,6 +3,7 @@ import { entries } from "browser-stream-tar";
 export const tars = {
   "test.tar": ["a.txt", "b.csv", "z.doc"],
   "bytes.tar": ["0.bytes", "1.bytes", "511.bytes", "512.bytes", "513.bytes"],
+  "v7.tar": ["test.txt"]
   /*
   "unicode.tar": ["høstål.txt"]
   "unicode-bsd.tar": ["høllø.txt"]
