@@ -30,6 +30,18 @@ const BLOCKSIZE = 512;
  */
 
 /**
+ * @see https://www.systutorials.com/docs/linux/man/5-star/
+ */
+export function decodePaxHeader(header) {
+  const string = new TextDecoder().decode(header);
+  const m = string.match(/^\d+ (\w+)=([^\n]+)/);
+  if (m) {
+    return { [m[1]]: m[2] };
+  }
+  return {};
+}
+
+/**
  * Decodes header
  * @param {ReadableStreamReader} reader where to read from
  * @param {UInt8Array} buffer
@@ -49,7 +61,10 @@ export async function decodeHeader(reader, buffer, header) {
 
         return buffer.subarray(BLOCKSIZE);
 
-      //case 72: // Pax
+      /*
+      case 72: // Pax
+        header = decodePaxHeader(buffer.subarray(BLOCKSIZE));
+*/
 
       default:
         throw new Error(`Unsupported header type ${buffer[156]}`);
