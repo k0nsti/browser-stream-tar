@@ -30,8 +30,11 @@ const BLOCKSIZE = 512;
  */
 
 /**
+ * Decodes header
+ * @param {ReadableStreamReader} reader where to read from
  * @param {UInt8Array} bytes
- * @return {Object}
+ * @param {Object} header to be filled with values form bytes and reader
+ * @returns {UInt8Array} buffer positioned after the header
  */
 export async function decodeHeader(reader, buffer, header) {
   buffer = await fill(reader, buffer, BLOCKSIZE);
@@ -41,7 +44,7 @@ export async function decodeHeader(reader, buffer, header) {
       case 0:
       case 48:
         header.name = toString(buffer.subarray(0, 100));
-        header.size = toInteger(buffer.subarray(124, 124 + 12));
+        header.size = toInteger(buffer.subarray(124, 136));
         header.mode = toInteger(buffer.subarray(100, 108));
 
         return buffer.subarray(BLOCKSIZE);
