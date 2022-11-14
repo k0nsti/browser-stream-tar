@@ -33,19 +33,23 @@ const BLOCKSIZE = 512;
  * @param {UInt8Array} bytes
  * @return {Object}
  */
-export function decodeHeader(buffer) {
+export async function decodeHeader(reader, buffer, header) {
+  buffer = await fill(reader, buffer, BLOCKSIZE);
+
   if (buffer[0] !== 0) {
     switch (buffer[156]) {
       case 0:
       case 48:
-        const name = toString(buffer.subarray(0, 100));
-        const size = toInteger(buffer.subarray(124, 124 + 12));
-        const mode = toInteger(buffer.subarray(100, 108));
-        return { name, size, mode };
+        header.name = toString(buffer.subarray(0, 100));
+        header.size = toInteger(buffer.subarray(124, 124 + 12));
+        header.mode = toInteger(buffer.subarray(100, 108));
+
+        return buffer.subarray(BLOCKSIZE);
 
       //case 72: // Pax
 
-      default: throw new Error(`Unsupported header type ${buffer[156]}`);
+      default:
+        throw new Error(`Unsupported header type ${buffer[156]}`);
     }
   }
 }
@@ -60,12 +64,7 @@ export async function* entries(tar) {
 
   let buffer, header;
 
-  while (
-    (buffer = await fill(reader, buffer, BLOCKSIZE)) &&
-    (header = decodeHeader(buffer))
-  ) {
-    buffer = buffer.subarray(BLOCKSIZE);
-
+  while ((buffer = await decodeHeader(reader, buffer, (header = {})))) {
     header.stream = new ReadableStream({
       async pull(controller) {
         let remaining = header.size;

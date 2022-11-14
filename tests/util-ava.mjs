@@ -21,19 +21,23 @@ test("overflow", t => {
   t.is(overflow(513), 511);
 });
 
-test("header empty", t => {
-  t.is(decodeHeader(new Uint8Array([0x0])), undefined);
+test("header empty", async t => {
+  const buffer = new Uint8Array(512);
+  buffer[0] = 0;
+
+  t.is(await decodeHeader({},buffer), undefined);
 });
 
-test("header unknown type", t => {
+test("header unknown type", async t => {
   const buffer = new Uint8Array(512);
   buffer[0] = 65; // todo should throw without
   buffer[156] = 101;
 
-  t.throws(() => decodeHeader(buffer), { message: /Unsupported header type/ });
+  await t.throwsAsync(() => decodeHeader({},buffer, {}), { message: /Unsupported header type/ });
 });
 
-test("header plain file", t => {
+test("header plain file", async t => {
+  const dummyReader = {};
   const buffer = new Uint8Array(512);
 
   buffer[0] = 65;
@@ -61,9 +65,13 @@ test("header plain file", t => {
   buffer[135] = 53;
   buffer[156] = "0";
 
-  t.deepEqual(decodeHeader(buffer), { name: "AB", size: 5, mode: 0o666 });
+  const header = {};
+
+  await decodeHeader(dummyReader, buffer, header);
+  t.deepEqual(header, { name: "AB", size: 5, mode: 0o666 });
 
   buffer[156] = 0;
 
-  t.deepEqual(decodeHeader(buffer), { name: "AB", size: 5, mode: 0o666 });
+  await decodeHeader(dummyReader, buffer, header);
+  t.deepEqual(header, { name: "AB", size: 5, mode: 0o666 });
 });
