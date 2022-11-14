@@ -38,6 +38,15 @@ test("header plain file", t => {
 
   buffer[0] = 65;
   buffer[1] = 66;
+  buffer[100] = 48;
+  buffer[101] = 48;
+  buffer[102] = 48;
+  buffer[103] = 48;
+  buffer[104] = 48;
+  buffer[105] = 48 + 6;
+  buffer[106] = 48 + 6;
+  buffer[107] = 48 + 6;
+
   buffer[124] = 48;
   buffer[125] = 48;
   buffer[126] = 48;
@@ -52,9 +61,9 @@ test("header plain file", t => {
   buffer[135] = 53;
   buffer[156] = "0";
 
-  t.deepEqual(decodeHeader(buffer), { name: "AB", size: 5 });
+  t.deepEqual(decodeHeader(buffer), { name: "AB", size: 5, mode: 0o666 });
 
   buffer[156] = 0;
 
-  t.deepEqual(decodeHeader(buffer), { name: "AB", size: 5 });
+  t.deepEqual(decodeHeader(buffer), { name: "AB", size: 5, mode: 0o666 });
 });

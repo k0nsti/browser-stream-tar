@@ -25,6 +25,7 @@ const BLOCKSIZE = 512;
  * @typedef {Object} TarStreamEntry
  * @property {string} name
  * @property {number} size
+ * @property {number} mode
  * @property {ReadableStream} stream
  */
 
@@ -39,7 +40,8 @@ export function decodeHeader(buffer) {
       case 48:
         const name = toString(buffer.subarray(0, 100));
         const size = toInteger(buffer.subarray(124, 124 + 12));
-        return { name, size };
+        const mode = toInteger(buffer.subarray(100, 108));
+        return { name, size, mode };
 
       //case 72: // Pax
 
