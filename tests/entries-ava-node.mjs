@@ -4,8 +4,7 @@ import { Readable } from "node:stream";
 import { assertTarStreamEntries, tars } from "./assertions.mjs";
 import { readControlChunkSize } from "./util.mjs";
 
-
-async function entryWithChunksSize(t, size) {
+async function entryWithChunksSize(t, size, consume = true) {
   for (const [name, entries] of Object.entries(tars)) {
     const nodeStream = createReadStream(
       new URL("fixtures/" + name, import.meta.url).pathname
@@ -18,16 +17,18 @@ async function entryWithChunksSize(t, size) {
       await readControlChunkSize(Readable.toWeb(nodeStream), size),
       entries,
       async name =>
-        Readable.toWeb(
-          createReadStream(
-            new URL("fixtures/" + name, import.meta.url).pathname
-          )
-        )
+        consume
+          ? Readable.toWeb(
+              createReadStream(
+                new URL("fixtures/" + name, import.meta.url).pathname
+              )
+            )
+          : undefined
     );
   }
 }
 
-entryWithChunksSize.title = (providedTitle, size) => `entries <${size}>`;
+entryWithChunksSize.title = (providedTitle, size, consume=true) => `entries <${size}> ${consume ? 'consume data': 'skip data'}`;
 
 test(entryWithChunksSize, 1000);
 test(entryWithChunksSize, 400);
@@ -44,3 +45,6 @@ test(entryWithChunksSize, 40);
 test(entryWithChunksSize, 31);
 test(entryWithChunksSize, 30);
 test(entryWithChunksSize, 10);
+
+
+test(entryWithChunksSize, 10, false);

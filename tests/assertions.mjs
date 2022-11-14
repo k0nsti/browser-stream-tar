@@ -3,7 +3,7 @@ import { entries } from "browser-stream-tar";
 export const tars = {
   "test.tar": ["a.txt", "b.csv", "z.doc"],
   "bytes.tar": ["0.bytes", "1.bytes", "511.bytes", "512.bytes", "513.bytes"],
-  "v7.tar": ["test.txt"],
+  "v7.tar": ["test.txt"]
   /*
   "base-256-size.tar": ["test.txt"]
   "unicode.tar": ["høstål.txt"]
@@ -21,13 +21,15 @@ export async function assertTarStreamEntries(
   for await (const entry of entries(stream)) {
     t.is(entry.name, entryNames[i], `[${i}].name`);
 
-    await compareReadables(
-      t,
-      (await entryStream(entry.name)).getReader(),
-      entry.stream.getReader(),
-      `[${i}].stream`
-    );
-
+    const es = await entryStream(entry.name);
+    if (es) {
+      await compareReadables(
+        t,
+        es.getReader(),
+        entry.stream.getReader(),
+        `[${i}].stream`
+      );
+    }
     i++;
   }
   t.is(i, entryNames.length);

@@ -101,19 +101,18 @@ export async function* entries(tar) {
 
         controller.close();
         consumed = true;
-      },
+      }
     });
 
     yield header;
 
     if (!consumed) {
-      while (true) {
-        const { done, value } = await reader.read();
+      const r = header.stream.getReader();
 
-        if (done) {
-          break;
-        }
-      }
+      let result;
+      do {
+        result = await r.read();
+      } while (!result.done);
     }
   }
 }
