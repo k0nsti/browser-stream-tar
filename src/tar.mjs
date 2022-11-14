@@ -32,8 +32,8 @@ const BLOCKSIZE = 512;
 /**
  * Decodes header
  * @param {ReadableStreamReader} reader where to read from
- * @param {UInt8Array} bytes
- * @param {Object} header to be filled with values form bytes and reader
+ * @param {UInt8Array} buffer
+ * @param {Object} header to be filled with values form buffer and reader
  * @returns {UInt8Array} buffer positioned after the header
  */
 export async function decodeHeader(reader, buffer, header) {
