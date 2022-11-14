@@ -68,6 +68,7 @@ export async function* entries(tar) {
   let buffer, header;
 
   while ((buffer = await decodeHeader(reader, buffer, (header = {})))) {
+    let consumed = false;
     header.stream = new ReadableStream({
       async pull(controller) {
         let remaining = header.size;
@@ -99,12 +100,21 @@ export async function* entries(tar) {
         buffer = await skip(reader, buffer, remaining + overflow(header.size));
 
         controller.close();
-      }
+        consumed = true;
+      },
     });
 
     yield header;
 
-    // TODO check if stream has been consumed when we reach this positon
+    if (!consumed) {
+      while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) {
+          break;
+        }
+      }
+    }
   }
 }
 
