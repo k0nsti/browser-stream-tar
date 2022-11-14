@@ -30,15 +30,19 @@ const BLOCKSIZE = 512;
  */
 
 /**
+ * Decodes a PAX header
  * @see https://www.systutorials.com/docs/linux/man/5-star/
+ * @param {UInt8Array} buffer
+ * @param {Object} header to be filled with values form buffer
  */
-export function decodePaxHeader(header) {
-  const string = new TextDecoder().decode(header);
-  const m = string.match(/^\d+ (\w+)=([^\n]+)/);
-  if (m) {
-    return { [m[1]]: m[2] };
+export function decodePaxHeader(buffer, header) {
+
+  for (const line of new TextDecoder().decode(buffer).split(/\n/)) {
+    const m = line.match(/^\d+ (\w+)=(.*)/);
+    if (m) {
+      header[m[1]] = m[2];
+    }
   }
-  return {};
 }
 
 /**
@@ -63,7 +67,7 @@ export async function decodeHeader(reader, buffer, header) {
 
       /*
       case 72: // Pax
-        header = decodePaxHeader(buffer.subarray(BLOCKSIZE));
+        decodePaxHeader(buffer.subarray(BLOCKSIZE), header);
 */
 
       default:

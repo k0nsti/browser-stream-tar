@@ -22,13 +22,15 @@ test("overflow", t => {
   t.is(overflow(513), 511);
 });
 
-test.skip("pax header", async t => {
+test("pax header", async t => {
   const buffer = new Uint8Array([
     0x32, 0x31, 0x20, 0x70, 0x61, 0x74, 0x68, 0x3d, 0x68, 0xc3, 0xb8, 0x73,
     0x74, 0xc3, 0xa5, 0x6c, 0x2e, 0x74, 0x78, 0x74, 0x0a
   ]);
 
-  t.deepEqual(decodePaxHeader(buffer), { path: "høstål.txt" });
+  const header = {};
+  decodePaxHeader(buffer, header);
+  t.deepEqual(header, { path: "høstål.txt" });
 });
 
 test("header empty", async t => {
