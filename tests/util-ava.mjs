@@ -30,7 +30,7 @@ test("pax header", async t => {
 
   const header = {};
   decodePaxHeader(buffer, header);
-  t.deepEqual(header, { path: "høstål.txt" });
+  t.deepEqual(header, { name: "høstål.txt" });
 });
 
 test("header empty", async t => {

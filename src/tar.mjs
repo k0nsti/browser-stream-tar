@@ -36,11 +36,14 @@ const BLOCKSIZE = 512;
  * @param {Object} header to be filled with values form buffer
  */
 export function decodePaxHeader(buffer, header) {
-
   for (const line of new TextDecoder().decode(buffer).split(/\n/)) {
     const m = line.match(/^\d+ (\w+)=(.*)/);
     if (m) {
-      header[m[1]] = m[2];
+      let key = m[1];
+      if (key === "path") {
+        key = "name";
+      }
+      header[key] = m[2];
     }
   }
 }
@@ -56,22 +59,26 @@ export async function decodeHeader(reader, buffer, header) {
   buffer = await fill(reader, buffer, BLOCKSIZE);
 
   if (buffer[0] !== 0) {
-    switch (buffer[156]) {
+    const type = buffer[156];
+
+    switch (type) {
       case 0:
       case 48:
+      case 120:
         header.name = toString(buffer.subarray(0, 100));
         header.size = toInteger(buffer.subarray(124, 136));
         header.mode = toInteger(buffer.subarray(100, 108));
 
+        if (type === 120) {
+          // PAX
+          decodePaxHeader(buffer.subarray(BLOCKSIZE), header);
+          return buffer.subarray(BLOCKSIZE + BLOCKSIZE);
+        }
+
         return buffer.subarray(BLOCKSIZE);
 
-      /*
-      case 72: // Pax
-        decodePaxHeader(buffer.subarray(BLOCKSIZE), header);
-*/
-
       default:
-        throw new Error(`Unsupported header type ${buffer[156]}`);
+        throw new Error(`Unsupported header type ${type}`);
     }
   }
 }
