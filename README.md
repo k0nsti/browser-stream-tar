@@ -22,20 +22,22 @@ extract tar entries from browser streams
 *   [BLOCKSIZE](#blocksize)
 *   [TarStreamEntry](#tarstreamentry)
     *   [Properties](#properties)
-*   [decodeHeader](#decodeheader)
+*   [decodePaxHeader](#decodepaxheader)
     *   [Parameters](#parameters)
-*   [entries](#entries)
+*   [decodeHeader](#decodeheader)
     *   [Parameters](#parameters-1)
+*   [entries](#entries)
+    *   [Parameters](#parameters-2)
 *   [enqueue](#enqueue)
 *   [buffer](#buffer)
 *   [toString](#tostring)
-    *   [Parameters](#parameters-2)
-*   [toInteger](#tointeger)
     *   [Parameters](#parameters-3)
-*   [fill](#fill)
+*   [toInteger](#tointeger)
     *   [Parameters](#parameters-4)
-*   [skip](#skip)
+*   [fill](#fill)
     *   [Parameters](#parameters-5)
+*   [skip](#skip)
+    *   [Parameters](#parameters-6)
 
 ## BLOCKSIZE
 
@@ -69,6 +71,17 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 *   `size` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 *   `mode` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 *   `stream` **ReadableStream**&#x20;
+
+## decodePaxHeader
+
+*   **See**: <https://www.systutorials.com/docs/linux/man/5-star/>
+
+Decodes a PAX header
+
+### Parameters
+
+*   `buffer` **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+*   `header` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** to be filled with values form buffer
 
 ## decodeHeader
 
