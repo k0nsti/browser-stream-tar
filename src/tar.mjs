@@ -46,7 +46,6 @@ export function decodePaxHeader(buffer, header) {
       header[key] = m[2];
     }
   }
-  console.log(header);
 }
 
 /**
@@ -59,15 +58,6 @@ export function decodePaxHeader(buffer, header) {
 export async function decodeHeader(reader, buffer, header) {
   buffer = await fill(reader, buffer, BLOCKSIZE);
 
-  function decode() {
-    if (header.name === undefined) {
-      header.name = toString(buffer.subarray(0, 100));
-    }
-    header.size = toInteger(buffer.subarray(124, 136));
-    header.mode = toInteger(buffer.subarray(100, 108));
-    buffer = buffer.subarray(BLOCKSIZE);
-  };
-
   if (buffer[0] !== 0) {
     const type = buffer[156];
 
@@ -75,15 +65,17 @@ export async function decodeHeader(reader, buffer, header) {
       case 0:
       case 48:
       case 120:
-        decode();
-
+        if (header.name === undefined) {
+          header.name = toString(buffer.subarray(0, 100));
+        }
+        header.size = toInteger(buffer.subarray(124, 136));
+        header.mode = toInteger(buffer.subarray(100, 108));
+        buffer = buffer.subarray(BLOCKSIZE);
+    
         if (type === 120) {
-          buffer = await fill(reader, buffer, BLOCKSIZE * 2);
+          buffer = await fill(reader, buffer, BLOCKSIZE);
           decodePaxHeader(buffer, header);
-
-          buffer = buffer.subarray(BLOCKSIZE);
-
-          decode();
+          return decodeHeader(reader, buffer.subarray(BLOCKSIZE), header);
         }
 
         return buffer;
