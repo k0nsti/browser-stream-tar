@@ -7,7 +7,7 @@ import { readControlChunkSize } from "./util.mjs";
 async function entryWithChunksSize(t, size, consume = true) {
   for (const [name, entries] of Object.entries(tars)) {
     const nodeStream = createReadStream(
-      new URL("fixtures/" + name, import.meta.url).pathname
+      new URL("fixtures/" + name, import.meta.url)
     );
 
     // @see https://exploringjs.com/nodejs-shell-scripting/ch_web-streams.html
@@ -19,16 +19,15 @@ async function entryWithChunksSize(t, size, consume = true) {
       async name =>
         consume
           ? Readable.toWeb(
-              createReadStream(
-                new URL("fixtures/" + name, import.meta.url).pathname
-              )
+              createReadStream(new URL("fixtures/" + name, import.meta.url))
             )
           : undefined
     );
   }
 }
 
-entryWithChunksSize.title = (providedTitle, size, consume=true) => `entries <${size}> ${consume ? 'consume data': 'skip data'}`;
+entryWithChunksSize.title = (providedTitle, size, consume = true) =>
+  `entries <${size}> ${consume ? "consume data" : "skip data"}`;
 
 test(entryWithChunksSize, 1000);
 test(entryWithChunksSize, 400);
