@@ -32,10 +32,14 @@ const BLOCKSIZE = 512;
 /**
  * Decodes a PAX header
  * @see https://www.systutorials.com/docs/linux/man/5-star/
+ * @param {ReadableStreamReader} reader where to read from
  * @param {UInt8Array} buffer
  * @param {Object} header to be filled with values form buffer
+ * @returns {UInt8Array} buffer positioned after the consumed bytes
  */
-export function decodePaxHeader(buffer, header) {
+export async function decodePaxHeader(reader, buffer, header) {
+  buffer = await fill(reader, buffer, BLOCKSIZE);
+
   for (const line of new TextDecoder().decode(buffer).split(/\n/)) {
     const m = line.match(/^\d+ (\w+)=(.*)/);
     if (m) {
@@ -46,6 +50,8 @@ export function decodePaxHeader(buffer, header) {
       header[key] = m[2];
     }
   }
+
+  return buffer.subarray(BLOCKSIZE);
 }
 
 /**
@@ -53,7 +59,7 @@ export function decodePaxHeader(buffer, header) {
  * @param {ReadableStreamReader} reader where to read from
  * @param {UInt8Array} buffer
  * @param {Object} header to be filled with values form buffer and reader
- * @returns {UInt8Array} buffer positioned after the header
+ * @returns {UInt8Array} buffer positioned after the consumed bytes
  */
 export async function decodeHeader(reader, buffer, header) {
   buffer = await fill(reader, buffer, BLOCKSIZE);
@@ -73,9 +79,7 @@ export async function decodeHeader(reader, buffer, header) {
         buffer = buffer.subarray(BLOCKSIZE);
     
         if (type === 120) {
-          buffer = await fill(reader, buffer, BLOCKSIZE);
-          decodePaxHeader(buffer, header);
-          return decodeHeader(reader, buffer.subarray(BLOCKSIZE), header);
+          return decodeHeader(reader, await decodePaxHeader(reader, buffer, header), header);
         }
 
         return buffer;
