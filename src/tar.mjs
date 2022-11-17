@@ -69,13 +69,19 @@ export async function decodeHeader(reader, buffer, header) {
         header.size = toInteger(buffer.subarray(124, 136));
         header.mode = toInteger(buffer.subarray(100, 108));
 
+        buffer = buffer.subarray(BLOCKSIZE);
+
         if (type === 120) {
-          // PAX
-          decodePaxHeader(buffer.subarray(BLOCKSIZE), header);
-          return buffer.subarray(BLOCKSIZE + BLOCKSIZE);
+          buffer = await fill(reader, buffer, BLOCKSIZE * 2);
+          decodePaxHeader(buffer, header);
+
+          buffer = buffer.subarray(BLOCKSIZE);
+          header.size = toInteger(buffer.subarray(124, 136));
+
+          return buffer.subarray(BLOCKSIZE);
         }
 
-        return buffer.subarray(BLOCKSIZE);
+        return buffer;
 
       default:
         throw new Error(`Unsupported header type ${type}`);
