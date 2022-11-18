@@ -80,8 +80,11 @@ Decodes a PAX header
 
 ### Parameters
 
+*   `reader` **ReadableStreamReader** where to read from
 *   `buffer` **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 *   `header` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** to be filled with values form buffer
+
+Returns **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)** buffer positioned after the consumed bytes
 
 ## decodeHeader
 
@@ -93,7 +96,7 @@ Decodes header
 *   `buffer` **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 *   `header` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** to be filled with values form buffer and reader
 
-Returns **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)** buffer positioned after the header
+Returns **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)** buffer positioned after the consumed bytes
 
 ## entries
 
@@ -163,9 +166,9 @@ Skip some bytes from a buffer
 
 *   `reader` **ReadableStreamReader** where to read from
 *   `buffer` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
-*   `length` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `length` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** to be skipped
 
-Returns **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)** buffer filled after skipped bytes
+Returns **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)** buffer positionend after skipped bytes
 
 # install
 
