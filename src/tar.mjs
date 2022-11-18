@@ -212,8 +212,8 @@ export async function fill(reader, buffer, length) {
  * Skip some bytes from a buffer
  * @param {ReadableStreamReader} reader where to read from
  * @param {Uint8Array} buffer
- * @param {number} length
- * @returns {UInt8Array} buffer filled after skipped bytes
+ * @param {number} length to be skipped
+ * @returns {UInt8Array} buffer positionend after skipped bytes
  */
 export async function skip(reader, buffer, length) {
   buffer = await fill(reader, buffer, length);
