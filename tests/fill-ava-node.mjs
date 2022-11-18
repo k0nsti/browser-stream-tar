@@ -87,23 +87,3 @@ test("fill step by step", async t => {
 
   t.true((await fill(reader, buffer)) === undefined);
 });
-
-test.skip("fill tar", async t => {
-  const nodeStream = createReadStream(
-    new URL("fixtures/test.tar", import.meta.url).pathname
-  );
-
-  let buffer;
-
-  const reader = (
-    await readControlChunkSize(Readable.toWeb(nodeStream), 5)
-  ).getReader();
-
-  buffer = await fill(reader);
-
-  console.log("#######", toString(buffer), "#####");
-
-  buffer = await fill(reader, buffer);
-
-  console.log("#######", toString(buffer), "#####");
-});
