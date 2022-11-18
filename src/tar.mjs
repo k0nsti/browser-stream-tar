@@ -41,7 +41,7 @@ export async function decodePaxHeader(reader, buffer, header) {
   buffer = await fill(reader, buffer, BLOCKSIZE);
 
   for (const line of new TextDecoder().decode(buffer).split(/\n/)) {
-    const m = line.match(/^\d+ (\w+)=(.*)/);
+    const m = line.match(/^\d+ ([^=]+)=(.*)/);
     if (m) {
       let key = m[1];
       if (key === "path") {

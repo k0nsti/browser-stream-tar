@@ -1,12 +1,25 @@
 import { entries } from "browser-stream-tar";
 
 export const tars = {
-  "unicode-bsd2.tar": ["høllø.txt"],
-  "test.tar": ["a.txt", "b.csv", "z.doc"],
-  "bytes.tar": ["0.bytes", "1.bytes", "511.bytes", "512.bytes", "513.bytes"],
-  "v7.tar": ["test.txt"],
-  "unicode.tar": ["høstål.txt"],
-  "unicode-bsd.tar": ["høllø.txt"]
+  "unicode-bsd2.tar": [
+    {
+      name: "høllø.txt",
+      mode: 0o644,
+      "LIBARCHIVE.xattr.com.apple.quarantine":
+        "MDA4Mzs2MzZmNzJjOTtTYWZhcmk7QTYwRUIxRTAtRENENy00MjhFLTk1N0QtQzEyQTk2MzZFRjdC"
+    }
+  ],
+  "test.tar": [{ name: "a.txt" }, { name: "b.csv" }, { name: "z.doc" }],
+  "bytes.tar": [
+    { name: "0.bytes" },
+    { name: "1.bytes" },
+    { name: "511.bytes" },
+    { name: "512.bytes" },
+    { name: "513.bytes" }
+  ],
+  "v7.tar": [{ name: "test.txt" }],
+  "unicode.tar": [{ name: "høstål.txt" }],
+  "unicode-bsd.tar": [{ name: "høllø.txt" }]
 };
 
 export async function assertTarStreamEntries(
@@ -17,7 +30,9 @@ export async function assertTarStreamEntries(
 ) {
   let i = 0;
   for await (const entry of entries(stream)) {
-    t.is(entry.name, entryNames[i], `[${i}].name`);
+    for (const [k, v] of Object.entries(entryNames[i])) {
+      t.is(entry[k], v, `[${i}].${k}`);
+    }
 
     const es = await entryStream(entry.name);
     if (es) {
