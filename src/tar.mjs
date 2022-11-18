@@ -140,11 +140,11 @@ export async function* entries(tar) {
     yield header;
 
     if (!consumed) {
-      const r = header.stream.getReader();
+      const reader = header.stream.getReader();
 
       let result;
       do {
-        result = await r.read();
+        result = await reader.read();
       } while (!result.done);
     }
   }
