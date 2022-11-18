@@ -21,6 +21,8 @@
 
 const BLOCKSIZE = 512;
 
+const DECODER = new TextDecoder();
+
 /**
  * @typedef {Object} TarStreamEntry
  * @property {string} name
@@ -40,7 +42,7 @@ const BLOCKSIZE = 512;
 export async function decodePaxHeader(reader, buffer, header) {
   buffer = await fill(reader, buffer, BLOCKSIZE);
 
-  for (const line of new TextDecoder().decode(buffer).split(/\n/)) {
+  for (const line of DECODER.decode(buffer).split(/\n/)) {
     const m = line.match(/^\d+ ([^=]+)=(.*)/);
     if (m) {
       let key = m[1];
@@ -77,9 +79,13 @@ export async function decodeHeader(reader, buffer, header) {
         header.size = toInteger(buffer.subarray(124, 136));
         header.mode = toInteger(buffer.subarray(100, 108));
         buffer = buffer.subarray(BLOCKSIZE);
-    
+
         if (type === 120) {
-          return decodeHeader(reader, await decodePaxHeader(reader, buffer, header), header);
+          return decodeHeader(
+            reader,
+            await decodePaxHeader(reader, buffer, header),
+            header
+          );
         }
 
         return buffer;
@@ -150,17 +156,15 @@ export async function* entries(tar) {
   }
 }
 
+
 /**
  * Convert bytes into string
  * @param {UInt8Array} bytes
  * @returns {string}
  */
 export function toString(bytes) {
-  const chars = [];
-  for (let i = 0; i < bytes.length && bytes[i] !== 0; ) {
-    chars.push(bytes[i++]);
-  }
-  return String.fromCharCode(...chars);
+  const i = bytes.findIndex(b => b === 0);
+  return DECODER.decode(i < 0 ? bytes : bytes.subarray(0, i));
 }
 
 /**
