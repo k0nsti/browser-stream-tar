@@ -78,6 +78,8 @@ export async function decodeHeader(reader, buffer, header) {
         }
         header.size = toInteger(buffer.subarray(124, 136));
         header.mode = toInteger(buffer.subarray(100, 108));
+        header.mtime = new Date(1000 * toInteger(buffer.subarray(136, 148)));
+
         buffer = buffer.subarray(BLOCKSIZE);
 
         if (type === 120) {
