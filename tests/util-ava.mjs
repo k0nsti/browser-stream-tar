@@ -84,15 +84,39 @@ test("header plain file", async t => {
   buffer[133] = 48;
   buffer[134] = 48;
   buffer[135] = 53;
+
+  buffer[136] = 48;
+  buffer[137] = 48;
+  buffer[138] = 48;
+  buffer[139] = 48;
+  buffer[140] = 48;
+  buffer[141] = 48;
+  buffer[142] = 48;
+  buffer[143] = 48;
+  buffer[144] = 48;
+  buffer[145] = 48;
+  buffer[146] = 48;
+  buffer[147] = 48;
+
   buffer[156] = "0";
 
   const header = {};
 
   await decodeHeader(dummyReader, buffer, header);
-  t.deepEqual(header, { name: "AB", size: 5, mode: 0o666 });
+  t.deepEqual(header, {
+    name: "AB",
+    size: 5,
+    mode: 0o666,
+    mtime: new Date(0)
+  });
 
   buffer[156] = 0;
 
   await decodeHeader(dummyReader, buffer, header);
-  t.deepEqual(header, { name: "AB", size: 5, mode: 0o666 });
+  t.deepEqual(header, {
+    name: "AB",
+    size: 5,
+    mode: 0o666,
+    mtime: new Date(0)
+  });
 });
