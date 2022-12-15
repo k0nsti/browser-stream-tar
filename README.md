@@ -119,12 +119,12 @@ A0   A0        A1
 
 ## buffer
 
-\+--------- size --------+
++--------- size --------+
 |         +- remaining -+- overflow -+
 |         |             |            |
 HDD ... DDDDDDDDDDDDDDDDDD------------HHHHHH
 \[BUFFER .... ]             \[BUFFER ... ]
-\+-----------  skip --------+
++-----------  skip --------+
 
 ## toString
 
