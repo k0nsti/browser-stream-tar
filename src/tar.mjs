@@ -72,6 +72,7 @@ export async function decodeHeader(reader, buffer, header) {
     switch (type) {
       case 0:
       case 48:
+      case 103:
       case 120:
         if (header.name === undefined) {
           header.name = toString(buffer.subarray(0, 100));
@@ -82,7 +83,7 @@ export async function decodeHeader(reader, buffer, header) {
 
         buffer = buffer.subarray(BLOCKSIZE);
 
-        if (type === 120) {
+        if (type === 103 || type === 120) {
           return decodeHeader(
             reader,
             await decodePaxHeader(reader, buffer, header),

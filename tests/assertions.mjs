@@ -20,7 +20,7 @@ export const tars = {
   "v7.tar": [{ name: "test.txt" }],
   "unicode.tar": [{ name: "høstål.txt" }],
   "unicode-bsd.tar": [{ name: "høllø.txt" }],
-//  "global-header.tar" : [{ name: "ab"}]
+  "global-header.tar" : [{ name: "ab"}]
 };
 
 export async function assertTarStreamEntries(
