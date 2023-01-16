@@ -4,7 +4,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "sideEffects": false,
   "exports": {
     ".": "./src/tar.mjs"
   },
@@ -37,7 +36,7 @@
     "semantic-release": "^20.0.2"
   },
   "engines": {
-    "node": ">=18.12.1"
+    "node": ">=18.13.0"
   },
   "repository": {
     "type": "git",
