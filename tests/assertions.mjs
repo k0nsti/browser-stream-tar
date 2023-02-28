@@ -11,7 +11,7 @@ export const tars = {
   ],
   "test.tar": [{ name: "a.txt" }, { name: "b.csv" }, { name: "z.doc" }],
   "bytes.tar": [
-    { name: "0.bytes" },
+    { name: "0.bytes", mode: 0o644, mtime: new Date("2022-11-10T20:00:07") },
     { name: "1.bytes" },
     { name: "511.bytes" },
     { name: "512.bytes" },
@@ -32,7 +32,7 @@ export async function assertTarStreamEntries(
   let i = 0;
   for await (const entry of entries(stream)) {
     for (const [k, v] of Object.entries(entryNames[i])) {
-      t.is(entry[k], v, `[${i}].${k}`);
+      t.deepEqual(entry[k], v, `[${i}].${k}`);
     }
 
     const es = await entryStream(entry.name);
