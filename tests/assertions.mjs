@@ -12,7 +12,7 @@ export const tars = {
   "test.tar": [{ name: "a.txt" }, { name: "b.csv" }, { name: "z.doc" }],
   "bytes.tar": [
     { name: "0.bytes", mode: 0o644, mtime: new Date("2022-11-10T21:00:07") }, // TODO TZ aware ?
-    { name: "1.bytes" },
+    { name: "1.bytes", uid: 501, gid: 20, gname: "staff", uname: "markus" },
     { name: "511.bytes" },
     { name: "512.bytes" },
     { name: "513.bytes" }
@@ -20,7 +20,7 @@ export const tars = {
   "v7.tar": [{ name: "test.txt" }],
   "unicode.tar": [{ name: "høstål.txt" }],
   "unicode-bsd.tar": [{ name: "høllø.txt" }],
-  "global-header.tar" : [{ name: "ab"}]
+  "global-header.tar": [{ name: "ab" }]
 };
 
 export async function assertTarStreamEntries(
