@@ -72,6 +72,10 @@ test("header plain file", async t => {
   buffer[106] = 48 + 6;
   buffer[107] = 48 + 6;
 
+  buffer[108] = 48;
+
+  buffer[116] = 48;
+
   buffer[124] = 48;
   buffer[125] = 48;
   buffer[126] = 48;
@@ -107,7 +111,11 @@ test("header plain file", async t => {
     name: "AB",
     size: 5,
     mode: 0o666,
-    mtime: new Date(0)
+    mtime: new Date(0),
+    uname: "",
+    gname: "",
+    uid: 0,
+    gid: 0
   });
 
   buffer[156] = 0;
@@ -117,6 +125,10 @@ test("header plain file", async t => {
     name: "AB",
     size: 5,
     mode: 0o666,
-    mtime: new Date(0)
+    mtime: new Date(0),
+    uname: "",
+    gname: "",
+    uid: 0,
+    gid: 0
   });
 });

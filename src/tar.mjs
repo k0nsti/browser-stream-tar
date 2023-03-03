@@ -77,9 +77,13 @@ export async function decodeHeader(reader, buffer, header) {
         if (header.name === undefined) {
           header.name = toString(buffer.subarray(0, 100));
         }
-        header.size = toInteger(buffer.subarray(124, 136));
         header.mode = toInteger(buffer.subarray(100, 108));
+        header.uid = toInteger(buffer.subarray(108, 116));
+        header.gid = toInteger(buffer.subarray(116, 124));
+        header.size = toInteger(buffer.subarray(124, 136));
         header.mtime = new Date(1000 * toInteger(buffer.subarray(136, 148)));
+        header.uname = toString(buffer.subarray(265, 297));
+        header.gname = toString(buffer.subarray(297, 329));
 
         buffer = buffer.subarray(BLOCKSIZE);
 
