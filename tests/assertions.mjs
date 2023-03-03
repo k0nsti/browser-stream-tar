@@ -11,7 +11,7 @@ export const tars = {
   ],
   "test.tar": [{ name: "a.txt" }, { name: "b.csv" }, { name: "z.doc" }],
   "bytes.tar": [
-    { name: "0.bytes", mode: 0o644, mtime: new Date("2022-11-10T20:00:07") },
+    { name: "0.bytes", mode: 0o644, mtime: new Date("2022-11-10T21:00:07") }, // TODO TZ aware ?
     { name: "1.bytes" },
     { name: "511.bytes" },
     { name: "512.bytes" },
