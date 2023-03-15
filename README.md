@@ -31,31 +31,25 @@ for await (const entry of entries(response.body)) {
 
 ### Table of Contents
 
-- [browser-stream-tar](#browser-stream-tar)
-- [example](#example)
-- [API](#api)
-    - [Table of Contents](#table-of-contents)
-  - [BLOCKSIZE](#blocksize)
-  - [TarStreamEntry](#tarstreamentry)
-    - [Properties](#properties)
-  - [decodePaxHeader](#decodepaxheader)
-    - [Parameters](#parameters)
-  - [decodeHeader](#decodeheader)
-    - [Parameters](#parameters-1)
-  - [entries](#entries)
-    - [Parameters](#parameters-2)
-  - [enqueue](#enqueue)
-  - [buffer](#buffer)
-  - [toString](#tostring)
-    - [Parameters](#parameters-3)
-  - [toInteger](#tointeger)
-    - [Parameters](#parameters-4)
-  - [fill](#fill)
-    - [Parameters](#parameters-5)
-  - [skip](#skip)
-    - [Parameters](#parameters-6)
-- [install](#install)
-- [license](#license)
+*   [BLOCKSIZE](#blocksize)
+*   [TarEntry](#tarentry)
+    *   [Properties](#properties)
+*   [decodePaxHeader](#decodepaxheader)
+    *   [Parameters](#parameters)
+*   [decodeHeader](#decodeheader)
+    *   [Parameters](#parameters-1)
+*   [entries](#entries)
+    *   [Parameters](#parameters-2)
+*   [enqueue](#enqueue)
+*   [buffer](#buffer)
+*   [toString](#tostring)
+    *   [Parameters](#parameters-3)
+*   [toInteger](#tointeger)
+    *   [Parameters](#parameters-4)
+*   [fill](#fill)
+    *   [Parameters](#parameters-5)
+*   [skip](#skip)
+    *   [Parameters](#parameters-6)
 
 ## BLOCKSIZE
 
@@ -79,7 +73,7 @@ prefix       345             155             NUL-terminated if NUL fits
 
 Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
 
-## TarStreamEntry
+## TarEntry
 
 Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
@@ -88,6 +82,11 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 *   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 *   `size` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 *   `mode` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `uname` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `gname` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
+*   `uid` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `gid` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
+*   `mtime` **[Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)**&#x20;
 *   `stream` **ReadableStream**&#x20;
 
 ## decodePaxHeader
@@ -124,7 +123,7 @@ Provide tar entry iterator.
 
 *   `tar` **ReadableStream**&#x20;
 
-Returns **AsyncIterator<[TarStreamEntry](#tarstreamentry)>**&#x20;
+Returns **AsyncIterator<[TarEntry](#tarentry)>**&#x20;
 
 ## enqueue
 
