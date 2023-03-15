@@ -11,7 +11,7 @@
 
 # browser-stream-tar
 
-extract tar entries from browser streams
+extract tar entries from web streams
 
 # example
 
@@ -31,25 +31,31 @@ for await (const entry of entries(response.body)) {
 
 ### Table of Contents
 
-*   [BLOCKSIZE](#blocksize)
-*   [TarStreamEntry](#tarstreamentry)
-    *   [Properties](#properties)
-*   [decodePaxHeader](#decodepaxheader)
-    *   [Parameters](#parameters)
-*   [decodeHeader](#decodeheader)
-    *   [Parameters](#parameters-1)
-*   [entries](#entries)
-    *   [Parameters](#parameters-2)
-*   [enqueue](#enqueue)
-*   [buffer](#buffer)
-*   [toString](#tostring)
-    *   [Parameters](#parameters-3)
-*   [toInteger](#tointeger)
-    *   [Parameters](#parameters-4)
-*   [fill](#fill)
-    *   [Parameters](#parameters-5)
-*   [skip](#skip)
-    *   [Parameters](#parameters-6)
+- [browser-stream-tar](#browser-stream-tar)
+- [example](#example)
+- [API](#api)
+    - [Table of Contents](#table-of-contents)
+  - [BLOCKSIZE](#blocksize)
+  - [TarStreamEntry](#tarstreamentry)
+    - [Properties](#properties)
+  - [decodePaxHeader](#decodepaxheader)
+    - [Parameters](#parameters)
+  - [decodeHeader](#decodeheader)
+    - [Parameters](#parameters-1)
+  - [entries](#entries)
+    - [Parameters](#parameters-2)
+  - [enqueue](#enqueue)
+  - [buffer](#buffer)
+  - [toString](#tostring)
+    - [Parameters](#parameters-3)
+  - [toInteger](#tointeger)
+    - [Parameters](#parameters-4)
+  - [fill](#fill)
+    - [Parameters](#parameters-5)
+  - [skip](#skip)
+    - [Parameters](#parameters-6)
+- [install](#install)
+- [license](#license)
 
 ## BLOCKSIZE
 
