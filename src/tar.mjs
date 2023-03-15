@@ -1,5 +1,4 @@
 /**
- *
  *    Field Name   Byte Offset     Length in Bytes Field Type
  *  name         0               100             NUL-terminated if NUL fits
  *  mode         100             8
@@ -24,10 +23,15 @@ const BLOCKSIZE = 512;
 const DECODER = new TextDecoder();
 
 /**
- * @typedef {Object} TarStreamEntry
+ * @typedef {Object} TarEntry
  * @property {string} name
  * @property {number} size
  * @property {number} mode
+ * @property {string} uname
+ * @property {string} gname
+ * @property {number} uid
+ * @property {number} gid
+ * @property {Date} mtime
  * @property {ReadableStream} stream
  */
 
@@ -106,7 +110,7 @@ export async function decodeHeader(reader, buffer, header) {
 /**
  * Provide tar entry iterator.
  * @param {ReadableStream} tar
- * @return {AsyncIterator<TarStreamEntry>}
+ * @return {AsyncIterator<TarEntry>}
  */
 export async function* entries(tar) {
   const reader = tar.getReader();
