@@ -39,9 +39,9 @@ const DECODER = new TextDecoder();
  * Decodes a PAX header
  * @see https://www.systutorials.com/docs/linux/man/5-star/
  * @param {ReadableStreamReader} reader where to read from
- * @param {UInt8Array} buffer
+ * @param {Uint8Array} buffer
  * @param {Object} header to be filled with values form buffer
- * @returns {UInt8Array} buffer positioned after the consumed bytes
+ * @returns {Promise<Uint8Array>} buffer positioned after the consumed bytes
  */
 export async function decodePaxHeader(reader, buffer, header) {
   buffer = await fill(reader, buffer, BLOCKSIZE);
@@ -63,9 +63,9 @@ export async function decodePaxHeader(reader, buffer, header) {
 /**
  * Decodes header
  * @param {ReadableStreamReader} reader where to read from
- * @param {UInt8Array} buffer
+ * @param {Uint8Array} buffer
  * @param {Object} header to be filled with values form buffer and reader
- * @returns {UInt8Array} buffer positioned after the consumed bytes
+ * @returns {Promise<Uint8Array>} buffer positioned after the consumed bytes
  */
 export async function decodeHeader(reader, buffer, header) {
   buffer = await fill(reader, buffer, BLOCKSIZE);
@@ -170,7 +170,7 @@ export async function* entries(tar) {
 
 /**
  * Convert bytes into string
- * @param {UInt8Array} bytes
+ * @param {Uint8Array} bytes
  * @returns {string}
  */
 export function toString(bytes) {
@@ -180,7 +180,7 @@ export function toString(bytes) {
 
 /**
  * Convert ASCII octal number into number
- * @param {UInt8Array} bytes
+ * @param {Uint8Array} bytes
  * @returns {number}
  */
 export function toInteger(bytes) {
@@ -195,9 +195,9 @@ export function overflow(size) {
 /**
  * Read bytes from a reader and append them to a given buffer until a requested length of the buffer is reached
  * @param {ReadableStreamReader} reader where to read from
- * @param {UInt8Array} buffer initial buffer of undefined
+ * @param {Uint8Array} buffer initial buffer of undefined
  * @param {number} length desired buffer length
- * @returns {UInt8Array} filled up buffer
+ * @returns {Promise<Uint8Array>} filled up buffer
  */
 export async function fill(reader, buffer, length) {
   if (buffer?.length >= length) {
@@ -228,7 +228,7 @@ export async function fill(reader, buffer, length) {
  * @param {ReadableStreamReader} reader where to read from
  * @param {Uint8Array} buffer
  * @param {number} length to be skipped
- * @returns {UInt8Array} buffer positionend after skipped bytes
+ * @returns {Promise<Uint8Array>} buffer positionend after skipped bytes
  */
 export async function skip(reader, buffer, length) {
   buffer = await fill(reader, buffer, length);
