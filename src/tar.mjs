@@ -63,7 +63,7 @@ export async function decodePaxHeader(reader, buffer, header) {
 /**
  * Decodes header
  * @param {ReadableStreamReader} reader where to read from
- * @param {Uint8Array} buffer
+ * @param {Uint8Array|undefined} buffer
  * @param {Object} header to be filled with values form buffer and reader
  * @returns {Promise<Uint8Array>} buffer positioned after the consumed bytes
  */
@@ -195,9 +195,9 @@ export function overflow(size) {
 /**
  * Read bytes from a reader and append them to a given buffer until a requested length of the buffer is reached
  * @param {ReadableStreamReader} reader where to read from
- * @param {Uint8Array} buffer initial buffer of undefined
+ * @param {Uint8Array|undefined} buffer initial buffer or undefined
  * @param {number} length desired buffer length
- * @returns {Promise<Uint8Array>} filled up buffer
+ * @returns {Promise<Uint8Array|undefined>} filled up buffer
  */
 export async function fill(reader, buffer, length) {
   if (buffer?.length >= length) {
