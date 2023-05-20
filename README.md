@@ -98,10 +98,10 @@ Decodes a PAX header
 ### Parameters
 
 *   `reader` **ReadableStreamReader** where to read from
-*   `buffer` **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+*   `buffer` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 *   `header` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** to be filled with values form buffer
 
-Returns **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)** buffer positioned after the consumed bytes
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>** buffer positioned after the consumed bytes
 
 ## decodeHeader
 
@@ -110,10 +110,10 @@ Decodes header
 ### Parameters
 
 *   `reader` **ReadableStreamReader** where to read from
-*   `buffer` **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+*   `buffer` **([Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 *   `header` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** to be filled with values form buffer and reader
 
-Returns **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)** buffer positioned after the consumed bytes
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>** buffer positioned after the consumed bytes
 
 ## entries
 
@@ -149,7 +149,7 @@ Convert bytes into string
 
 ### Parameters
 
-*   `bytes` **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+*   `bytes` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
@@ -159,7 +159,7 @@ Convert ASCII octal number into number
 
 ### Parameters
 
-*   `bytes` **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
+*   `bytes` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 
 Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 
@@ -170,10 +170,10 @@ Read bytes from a reader and append them to a given buffer until a requested len
 ### Parameters
 
 *   `reader` **ReadableStreamReader** where to read from
-*   `buffer` **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)** initial buffer of undefined
+*   `buffer` **([Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** initial buffer or undefined
 *   `length` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** desired buffer length
 
-Returns **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)** filled up buffer
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<([Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))>** filled up buffer
 
 ## skip
 
@@ -185,7 +185,7 @@ Skip some bytes from a buffer
 *   `buffer` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 *   `length` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** to be skipped
 
-Returns **[UInt8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)** buffer positionend after skipped bytes
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>** buffer positionend after skipped bytes
 
 # install
 
