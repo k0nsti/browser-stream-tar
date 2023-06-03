@@ -32,7 +32,7 @@
     "browser-ava": "^1.3.44",
     "c8": "^7.14.0",
     "documentation": "^14.0.2",
-    "semantic-release": "^21.0.2"
+    "semantic-release": "^21.0.3s"
   },
   "engines": {
     "node": ">=18.13.0"
