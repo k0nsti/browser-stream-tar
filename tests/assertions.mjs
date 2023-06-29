@@ -1,4 +1,4 @@
-import { entries } from "browser-stream-tar";
+import { entries, files } from "browser-stream-tar";
 
 export const tars = {
   "unicode-bsd2.tar": [
@@ -11,7 +11,7 @@ export const tars = {
   ],
   "test.tar": [{ name: "a.txt" }, { name: "b.csv" }, { name: "z.doc" }],
   "bytes.tar": [
-    { name: "0.bytes", mode: 0o644, mtime: new Date("2022-11-10T21:00:07") }, // TODO TZ aware ?
+    { name: "0.bytes", mode: 0o644, mtime: new Date("2022-11-10T20:00:07+0000") },
     { name: "1.bytes", uid: 501, gid: 20, gname: "staff", uname: "markus" },
     { name: "511.bytes" },
     { name: "512.bytes" },
@@ -48,6 +48,18 @@ export async function assertTarStreamEntries(
   }
   t.is(i, entryNames.length);
 }
+
+export async function assertTarStreamFiles(
+  t,
+  stream,
+  fileNames = []) {
+  let i = 0;
+
+  for await (const entry of files(stream)) {
+    t.is(fileNames.name, fileName[i]);
+  }
+}
+
 
 async function readAll(reader) {
   let buffer = new Uint8Array();
