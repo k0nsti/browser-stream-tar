@@ -184,6 +184,7 @@ export async function* entries(tar) {
  */
 export async function* files(tar) {
   const mime = {
+    ".txt": "text/plain",
     ".csv": "text/csv",
     ".json": "application/json",
     ".xml": "application/xml",
@@ -193,6 +194,7 @@ export async function* files(tar) {
   for await (const entry of entries(tar)) {
     const m = entry.name.match(/(\.\w+)$/);
     entry.type = mime[m[1]] || "application/octet-stream";
+    entry.lastModified = entry.mtime;
     const stream = entry.stream;
     entry.stream = () => stream;
     yield entry;
