@@ -61,23 +61,33 @@ export async function decodePaxHeader(reader, buffer, header) {
 }
 
 /**
- * Decodes header
- * @param {ReadableStreamReader} reader where to read from
+ * Decodes the next header.
+ * @param {ReadableStreamReader<Uint8Array>} reader where to read from
  * @param {Uint8Array|undefined} buffer
  * @param {Object} header to be filled with values form buffer and reader
  * @returns {Promise<Uint8Array|undefined>} buffer positioned after the consumed bytes
  */
 export async function decodeHeader(reader, buffer, header) {
-  buffer = await fill(reader, buffer, BLOCKSIZE);
+  while ((buffer = await fill(reader, buffer, BLOCKSIZE))) {
+    if (buffer[0] === 0) break;
 
-  if (buffer[0] !== 0) {
     const type = buffer[156];
 
     switch (type) {
-      case 0:
-      case 48:
-      case 103:
-      case 120:
+      case 49: // '1' link
+      case 50: // '2' reserved
+      case 51: // '3' character special
+      case 52: // '4' block special
+      case 53: // '5' directory
+      case 54: // '6' FIFO special
+      case 55: // '7' reserved
+        buffer = buffer.subarray(BLOCKSIZE);
+        break;
+
+      case 0: //     regular file
+      case 48: // '0' regular file
+      case 103: // 'g' Global extended header
+      case 120: // 'x' Extended header referring to the next file in the archive
         if (header.name === undefined) {
           header.name = toString(buffer.subarray(0, 100));
         }
@@ -174,16 +184,17 @@ export async function* entries(tar) {
  */
 export async function* files(tar) {
   const mime = {
-    '.csv' : 'text/csv',
-    '.json' :'application/json',
-    '.xml' : 'application/xml',
-    '.tar' : 'application/x-tar'
+    ".csv": "text/csv",
+    ".json": "application/json",
+    ".xml": "application/xml",
+    ".tar": "application/x-tar"
   };
 
   for await (const entry of entries(tar)) {
     const m = entry.name.match(/(\.\w+)$/);
     entry.type = mime[m[1]] || "application/octet-stream";
-
+    const stream = entry.stream;
+    entry.stream = () => stream;
     yield entry;
   }
 }
@@ -214,7 +225,7 @@ export function overflow(size) {
 
 /**
  * Read bytes from a reader and append them to a given buffer until a requested length of the buffer is reached
- * @param {ReadableStreamReader} reader where to read from
+ * @param {ReadableStreamReader<Uint8Array>} reader where to read from
  * @param {Uint8Array|undefined} buffer initial buffer or undefined
  * @param {number} length desired buffer length
  * @returns {Promise<Uint8Array|undefined>} filled up buffer
@@ -245,7 +256,7 @@ export async function fill(reader, buffer, length) {
 
 /**
  * Skip some bytes from a buffer
- * @param {ReadableStreamReader} reader where to read from
+ * @param {ReadableStreamReader<Uint8Array>} reader where to read from
  * @param {Uint8Array} buffer
  * @param {number} length to be skipped
  * @returns {Promise<Uint8Array>} buffer positionend after skipped bytes
