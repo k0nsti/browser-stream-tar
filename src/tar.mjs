@@ -65,7 +65,7 @@ export async function decodePaxHeader(reader, buffer, header) {
  * @param {ReadableStreamReader} reader where to read from
  * @param {Uint8Array|undefined} buffer
  * @param {Object} header to be filled with values form buffer and reader
- * @returns {Promise<Uint8Array>} buffer positioned after the consumed bytes
+ * @returns {Promise<Uint8Array|undefined>} buffer positioned after the consumed bytes
  */
 export async function decodeHeader(reader, buffer, header) {
   buffer = await fill(reader, buffer, BLOCKSIZE);
@@ -167,6 +167,26 @@ export async function* entries(tar) {
   }
 }
 
+/**
+ * Provide tar entries as Files.
+ * @param {ReadableStream} tar
+ * @return {AsyncIterator<File>}
+ */
+export async function* files(tar) {
+  const mime = {
+    '.csv' : 'text/csv',
+    '.json' :'application/json',
+    '.xml' : 'application/xml',
+    '.tar' : 'application/x-tar'
+  };
+
+  for await (const entry of entries(tar)) {
+    const m = entry.name.match(/(\.\w+)$/);
+    entry.type = mime[m[1]] || "application/octet-stream";
+
+    yield entry;
+  }
+}
 
 /**
  * Convert bytes into string
