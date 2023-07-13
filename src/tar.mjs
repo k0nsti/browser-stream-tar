@@ -197,10 +197,7 @@ export async function* files(tar) {
     entry.lastModified = entry.mtime;
     const stream = entry.stream;
     entry.stream = () => stream;
-    entry.text = async () => {
-      const decoder = new TextDecoder();
-      return decoder.decode(await streamToUint8Array(stream));
-    };
+    entry.text = async () => DECODER.decode(await streamToUint8Array(stream));
 
     yield entry;
   }
