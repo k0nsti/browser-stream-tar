@@ -42,14 +42,16 @@ for await (const entry of entries(response.body)) {
     *   [Parameters](#parameters-2)
 *   [enqueue](#enqueue)
 *   [buffer](#buffer)
-*   [toString](#tostring)
+*   [files](#files)
     *   [Parameters](#parameters-3)
-*   [toInteger](#tointeger)
+*   [toString](#tostring)
     *   [Parameters](#parameters-4)
-*   [fill](#fill)
+*   [toInteger](#tointeger)
     *   [Parameters](#parameters-5)
-*   [skip](#skip)
+*   [fill](#fill)
     *   [Parameters](#parameters-6)
+*   [skip](#skip)
+    *   [Parameters](#parameters-7)
 
 ## BLOCKSIZE
 
@@ -105,15 +107,15 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 ## decodeHeader
 
-Decodes header
+Decodes the next header.
 
 ### Parameters
 
-*   `reader` **ReadableStreamReader** where to read from
+*   `reader` **ReadableStreamReader<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>** where to read from
 *   `buffer` **([Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
 *   `header` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** to be filled with values form buffer and reader
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>** buffer positioned after the consumed bytes
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<([Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))>** buffer positioned after the consumed bytes
 
 ## entries
 
@@ -143,6 +145,16 @@ HDD ... DDDDDDDDDDDDDDDDDD------------HHHHHH
 \[BUFFER .... ]             \[BUFFER ... ]
 +-----------  skip --------+
 
+## files
+
+Provide tar entries as Files.
+
+### Parameters
+
+*   `tar` **ReadableStream**&#x20;
+
+Returns **AsyncIterator\<File>**&#x20;
+
 ## toString
 
 Convert bytes into string
@@ -169,7 +181,7 @@ Read bytes from a reader and append them to a given buffer until a requested len
 
 ### Parameters
 
-*   `reader` **ReadableStreamReader** where to read from
+*   `reader` **ReadableStreamReader<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>** where to read from
 *   `buffer` **([Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))** initial buffer or undefined
 *   `length` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** desired buffer length
 
@@ -181,7 +193,7 @@ Skip some bytes from a buffer
 
 ### Parameters
 
-*   `reader` **ReadableStreamReader** where to read from
+*   `reader` **ReadableStreamReader<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>** where to read from
 *   `buffer` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 *   `length` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** to be skipped
 
