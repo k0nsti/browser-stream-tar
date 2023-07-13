@@ -52,6 +52,8 @@ for await (const entry of entries(response.body)) {
     *   [Parameters](#parameters-6)
 *   [skip](#skip)
     *   [Parameters](#parameters-7)
+*   [streamToUint8Array](#streamtouint8array)
+    *   [Parameters](#parameters-8)
 
 ## BLOCKSIZE
 
@@ -198,6 +200,16 @@ Skip some bytes from a buffer
 *   `length` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** to be skipped
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>** buffer positionend after skipped bytes
+
+## streamToUint8Array
+
+Reads web stream content into a Uint8Array.
+
+### Parameters
+
+*   `stream` **ReadableStream**&#x20;
+
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>**&#x20;
 
 # install
 
