@@ -193,7 +193,7 @@ export async function* files(tar) {
 
   for await (const entry of entries(tar)) {
     const m = entry.name.match(/(\.\w+)$/);
-    entry.type = mime[m[1]] || "application/octet-stream";
+    entry.type = mime[m?.[1]] || "application/octet-stream";
     entry.lastModified = entry.mtime;
     const stream = entry.stream;
     entry.stream = () => stream;
@@ -273,14 +273,12 @@ export async function skip(reader, buffer, length) {
   return buffer.subarray(length);
 }
 
-
-
 /**
  * Reads web stream content into a Uint8Array.
  * @param {ReadableStream} stream
  * @returns {Promise<Uint8Array>}
  */
-export async function streamToUint8Array(stream) {
+async function streamToUint8Array(stream) {
   const reader = stream.getReader();
 
   let buffer = new Uint8Array();
