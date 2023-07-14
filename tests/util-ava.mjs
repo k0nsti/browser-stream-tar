@@ -104,6 +104,12 @@ test("header plain file", async t => {
 
   buffer[156] = "0";
 
+  buffer[257] = 117;
+  buffer[258] = 115;
+  buffer[259] = 116;
+  buffer[260] = 97;
+  buffer[261] = 114;
+
   const header = {};
 
   await decodeHeader(dummyReader, buffer, header);
