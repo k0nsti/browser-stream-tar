@@ -51,6 +51,11 @@ test("header unknown type", async t => {
   const buffer = new Uint8Array(512);
   buffer[0] = 65; // todo should throw without
   buffer[156] = 101;
+  buffer[257] = 117;
+  buffer[258] = 115;
+  buffer[259] = 116;
+  buffer[260] = 97;
+  buffer[261] = 114;
 
   await t.throwsAsync(() => decodeHeader({}, buffer, {}), {
     message: /Unsupported header type/
