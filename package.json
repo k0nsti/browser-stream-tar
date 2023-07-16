@@ -1,6 +1,7 @@
 {
   "name": "browser-stream-tar",
   "version": "0.0.0-semantic-release",
+  "description": "split tar web-stream into a sequence of Files",
   "publishConfig": {
     "access": "public"
   },
@@ -8,7 +9,7 @@
     ".": "./src/tar.mjs"
   },
   "keywords": [
-    "stream",
+    "web-stream",
     "tar",
     "pax"
   ],

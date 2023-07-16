@@ -11,17 +11,17 @@
 
 # browser-stream-tar
 
-extract tar entries from web streams
+split tar web-stream into a sequence of Files
 
 # example
 
 ```js
-import { entries } from "browser-stream-tar";
+import { files } from "browser-stream-tar";
 
 const response = await fetch("some tar file");
-for await (const entry of entries(response.body)) {
-  console.log(entry.name);
-  // do something with entry.stream
+for await (const file of files(response.body)) {
+  console.log(file.name);
+  // do something with entry.stream()
 }
 ```
 
@@ -31,29 +31,35 @@ for await (const entry of entries(response.body)) {
 
 ### Table of Contents
 
-*   [BLOCKSIZE](#blocksize)
-*   [TarEntry](#tarentry)
-    *   [Properties](#properties)
-*   [decodePaxHeader](#decodepaxheader)
-    *   [Parameters](#parameters)
-*   [decodeHeader](#decodeheader)
-    *   [Parameters](#parameters-1)
-*   [entries](#entries)
-    *   [Parameters](#parameters-2)
-*   [enqueue](#enqueue)
-*   [buffer](#buffer)
-*   [files](#files)
-    *   [Parameters](#parameters-3)
-*   [toString](#tostring)
-    *   [Parameters](#parameters-4)
-*   [toInteger](#tointeger)
-    *   [Parameters](#parameters-5)
-*   [fill](#fill)
-    *   [Parameters](#parameters-6)
-*   [skip](#skip)
-    *   [Parameters](#parameters-7)
-*   [streamToUint8Array](#streamtouint8array)
-    *   [Parameters](#parameters-8)
+- [browser-stream-tar](#browser-stream-tar)
+- [example](#example)
+- [API](#api)
+    - [Table of Contents](#table-of-contents)
+  - [BLOCKSIZE](#blocksize)
+  - [TarEntry](#tarentry)
+    - [Properties](#properties)
+  - [decodePaxHeader](#decodepaxheader)
+    - [Parameters](#parameters)
+  - [decodeHeader](#decodeheader)
+    - [Parameters](#parameters-1)
+  - [entries](#entries)
+    - [Parameters](#parameters-2)
+  - [enqueue](#enqueue)
+  - [buffer](#buffer)
+  - [files](#files)
+    - [Parameters](#parameters-3)
+  - [toString](#tostring)
+    - [Parameters](#parameters-4)
+  - [toInteger](#tointeger)
+    - [Parameters](#parameters-5)
+  - [fill](#fill)
+    - [Parameters](#parameters-6)
+  - [skip](#skip)
+    - [Parameters](#parameters-7)
+  - [streamToUint8Array](#streamtouint8array)
+    - [Parameters](#parameters-8)
+- [install](#install)
+- [license](#license)
 
 ## BLOCKSIZE
 
