@@ -1,17 +1,17 @@
 {
   "name": "browser-stream-tar",
   "version": "0.0.0-semantic-release",
-  "description": "split tar web-stream into a sequence of Files",
   "publishConfig": {
     "access": "public"
   },
   "exports": {
     ".": "./src/tar.mjs"
   },
+  "description": "split tar web-stream into a sequence of Files",
   "keywords": [
-    "web-stream",
+    "pax",
     "tar",
-    "pax"
+    "web-stream"
   ],
   "contributors": [
     {
@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "ava": "^5.3.1",
-    "browser-ava": "^1.3.53",
+    "browser-ava": "^1.3.54",
     "c8": "^8.0.0",
     "documentation": "^14.0.2",
     "semantic-release": "^21.0.7"
