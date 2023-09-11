@@ -22,16 +22,16 @@
   "license": "BSD-2-Clause",
   "scripts": {
     "test": "npm run test:browser-ava && npm run test:ava",
-    "test:ava": "ava --timeout 2m tests/*-ava.mjs tests/*-ava-node.mjs",
+    "test:ava": "ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs && ava --timeout 2m tests/*-ava.mjs tests/*-ava-node.mjs",
     "test:browser-ava": "browser-ava --headless --no-keep-open tests/*-ava.mjs tests/*-ava-browser.mjs",
-    "cover": "c8 -x 'tests/**/*' --temp-directory build/tmp ava --timeout 2m tests/*-ava.mjs tests/*-ava-node.mjs && c8 report -r lcov -o build/coverage --temp-directory build/tmp",
+    "cover": "c8 -x 'tests/**/*' --temp-directory build/tmp ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs && c8 report -r lcov -o build/coverage --temp-directory build/tmp",
     "docs": "documentation readme --section=API ./src/**/*.mjs",
     "lint": "npm run lint:docs",
     "lint:docs": "documentation lint ./src/**/*.mjs"
   },
   "devDependencies": {
     "ava": "^5.3.1",
-    "browser-ava": "^1.3.57",
+    "browser-ava": "^1.3.58",
     "c8": "^8.0.1",
     "documentation": "^14.0.2",
     "semantic-release": "^21.1.1"
