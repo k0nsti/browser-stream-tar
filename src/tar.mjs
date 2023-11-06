@@ -23,7 +23,7 @@ const BLOCKSIZE = 512;
 const DECODER = new TextDecoder();
 
 /**
- * @typedef {Object} TarEntry
+ * @typedef {Object} File
  * @property {string} name
  * @property {number} size
  * @property {number} mode
@@ -31,19 +31,27 @@ const DECODER = new TextDecoder();
  * @property {string} gname
  * @property {number} uid
  * @property {number} gid
- * @property {Date} mtime
- * @property {ReadableStream} stream
+ * @property {Date} lastModified
+ * @property {ReadableStream} stream()
  */
+
+const mime = {
+  ".txt": "text/plain",
+  ".csv": "text/csv",
+  ".json": "application/json",
+  ".xml": "application/xml",
+  ".tar": "application/x-tar"
+};
 
 /**
  * Decodes a PAX header
  * @see https://www.systutorials.com/docs/linux/man/5-star/
  * @param {ReadableStreamReader} reader where to read from
  * @param {Uint8Array} buffer
- * @param {Object} header to be filled with values form buffer
+ * @param {Object} file to be filled with values form buffer
  * @returns {Promise<Uint8Array>} buffer positioned after the consumed bytes
  */
-export async function decodePaxHeader(reader, buffer, header) {
+export async function decodePaxHeader(reader, buffer, file) {
   buffer = await fill(reader, buffer, BLOCKSIZE);
 
   for (const line of DECODER.decode(buffer).split(/\n/)) {
@@ -53,26 +61,48 @@ export async function decodePaxHeader(reader, buffer, header) {
       if (key === "path") {
         key = "name";
       }
-      header[key] = m[2];
+      file[key] = m[2];
     }
   }
 
   return buffer.subarray(BLOCKSIZE);
 }
 
+function decodeBase(buffer, file) {
+  const name = decodeString(buffer.subarray(0, 100));
+  file.mode = decodeInteger(buffer.subarray(100, 108));
+  file.uid = decodeInteger(buffer.subarray(108, 116));
+  file.gid = decodeInteger(buffer.subarray(116, 124));
+  file.size = decodeInteger(buffer.subarray(124, 136));
+  file.lastModified = new Date(1000 * decodeInteger(buffer.subarray(136, 148)));
+  //file.magic = decodeString(buffer.subarray(257, 265));
+  file.uname = decodeString(buffer.subarray(265, 297));
+  file.gname = decodeString(buffer.subarray(297, 329));
+  const prefix = decodeString(buffer.subarray(345, 500));
+
+  file.name = prefix.length ? prefix + "/" + name : name;
+
+
+  if (file.name.match(/\._/)) {
+    file.type = "application/octet-stream";
+  } else {
+    const m = file.name.match(/(\.\w+)$/);
+    file.type = mime[m?.[1]] || "application/octet-stream";
+  }
+}
+
 /**
  * Decodes the next header.
  * @param {ReadableStreamReader<Uint8Array>} reader where to read from
  * @param {Uint8Array|undefined} buffer
- * @param {Object} header to be filled with values form buffer and reader
+ * @param {Object} file to be filled with values form buffer and reader
  * @returns {Promise<Uint8Array|undefined>} buffer positioned after the consumed bytes
  */
-export async function decodeHeader(reader, buffer, header) {
+export async function decodeHeader(reader, buffer, file) {
   while ((buffer = await fill(reader, buffer, BLOCKSIZE))) {
     if (buffer[0] === 0) break;
 
     const type = buffer[156];
-
     switch (type) {
       case 49: // '1' link
       case 50: // '2' reserved
@@ -84,32 +114,19 @@ export async function decodeHeader(reader, buffer, header) {
         buffer = buffer.subarray(BLOCKSIZE);
         break;
 
-      case 0: //     regular file
-      case 48: // '0' regular file
       case 103: // 'g' Global extended header
       case 120: // 'x' Extended header referring to the next file in the archive
-        if (header.name === undefined) {
-          header.name = toString(buffer.subarray(0, 100));
-        }
-        header.mode = toInteger(buffer.subarray(100, 108));
-        header.uid = toInteger(buffer.subarray(108, 116));
-        header.gid = toInteger(buffer.subarray(116, 124));
-        header.size = toInteger(buffer.subarray(124, 136));
-        header.mtime = new Date(1000 * toInteger(buffer.subarray(136, 148)));
-        header.uname = toString(buffer.subarray(265, 297));
-        header.gname = toString(buffer.subarray(297, 329));
-
         buffer = buffer.subarray(BLOCKSIZE);
+        return decodeHeader(
+          reader,
+          await decodePaxHeader(reader, buffer, file),
+          file
+        );
 
-        if (type === 103 || type === 120) {
-          return decodeHeader(
-            reader,
-            await decodePaxHeader(reader, buffer, header),
-            header
-          );
-        }
-
-        return buffer;
+      case 0: //     regular file
+      case 48: // '0' regular file
+        decodeBase(buffer, file);
+        return buffer.subarray(BLOCKSIZE);
 
       default:
         throw new Error(`Unsupported header type ${type}`);
@@ -118,20 +135,21 @@ export async function decodeHeader(reader, buffer, header) {
 }
 
 /**
- * Provide tar entry iterator.
+ * Provide tar entries as Files.
  * @param {ReadableStream} tar
- * @return {AsyncIterator<TarEntry>}
+ * @return {AsyncIterator<File>}
  */
-export async function* entries(tar) {
+export async function* files(tar) {
   const reader = tar.getReader();
 
-  let buffer, header;
+  let buffer, file;
 
-  while ((buffer = await decodeHeader(reader, buffer, (header = {})))) {
+  while ((buffer = await decodeHeader(reader, buffer, (file = {})))) {
     let consumed = false;
-    header.stream = new ReadableStream({
+
+    const stream = new ReadableStream({
       async pull(controller) {
-        let remaining = header.size;
+        let remaining = file.size;
         while (remaining >= buffer.length) {
           remaining = remaining - buffer.length;
           controller.enqueue(buffer);
@@ -157,17 +175,20 @@ export async function* entries(tar) {
          *            [BUFFER .... ]             [BUFFER ... ]
          *            +-----------  skip --------+
          */
-        buffer = await skip(reader, buffer, remaining + overflow(header.size));
+        buffer = await skip(reader, buffer, remaining + overflow(file.size));
 
         controller.close();
         consumed = true;
       }
     });
 
-    yield header;
+    file.text = async () => DECODER.decode(await streamToUint8Array(stream));
+    file.stream = () => stream;
+
+    yield file;
 
     if (!consumed) {
-      const reader = header.stream.getReader();
+      const reader = stream.getReader();
 
       let result;
       do {
@@ -178,48 +199,43 @@ export async function* entries(tar) {
 }
 
 /**
- * Provide tar entries as Files.
- * @param {ReadableStream} tar
- * @return {AsyncIterator<File>}
- */
-export async function* files(tar) {
-  const mime = {
-    ".txt": "text/plain",
-    ".csv": "text/csv",
-    ".json": "application/json",
-    ".xml": "application/xml",
-    ".tar": "application/x-tar"
-  };
-
-  for await (const entry of entries(tar)) {
-    const m = entry.name.match(/(\.\w+)$/);
-    entry.type = mime[m?.[1]] || "application/octet-stream";
-    entry.lastModified = entry.mtime;
-    const stream = entry.stream;
-    entry.stream = () => stream;
-    entry.text = async () => DECODER.decode(await streamToUint8Array(stream));
-
-    yield entry;
-  }
-}
-
-/**
- * Convert bytes into string
+ * Convert bytes into string.
  * @param {Uint8Array} bytes
  * @returns {string}
  */
-export function toString(bytes) {
+export function decodeString(bytes) {
   const i = bytes.findIndex(b => b === 0);
   return DECODER.decode(i < 0 ? bytes : bytes.subarray(0, i));
 }
 
 /**
- * Convert ASCII octal number into number
+ * Convert ASCII octal number into number.
  * @param {Uint8Array} bytes
  * @returns {number}
  */
-export function toInteger(bytes) {
-  return parseInt(toString(bytes), 8);
+export function decodeInteger(bytes) {
+  return parseInt(decodeString(bytes), 8);
+}
+
+export function encodeInteger(buffer, offset, number, length) {
+  for (const s of number.toString(8).padStart(length, "0")) {
+    buffer[offset++] = s.charCodeAt(0);
+  }
+}
+export function encodeString(buffer, offset, string, length) {
+  for (let i = 0; i < length; i++) {
+    buffer[offset + i] = string.charCodeAt(i);
+  }
+}
+
+export function checksum(buffer) {
+  let sum = 0;
+
+  for (let i = 0; i < BLOCKSIZE; i++) {
+    sum += i >= 148 && i < 156 ? 32 : buffer[i];
+  }
+
+  return sum;
 }
 
 export function overflow(size) {
@@ -228,7 +244,7 @@ export function overflow(size) {
 }
 
 /**
- * Read bytes from a reader and append them to a given buffer until a requested length of the buffer is reached
+ * Read bytes from a reader and append them to a given buffer until a requested length of the buffer is reached.
  * @param {ReadableStreamReader<Uint8Array>} reader where to read from
  * @param {Uint8Array|undefined} buffer initial buffer or undefined
  * @param {number} length desired buffer length
@@ -259,15 +275,14 @@ export async function fill(reader, buffer, length) {
 }
 
 /**
- * Skip some bytes from a buffer
+ * Skip some bytes from a buffer.
  * @param {ReadableStreamReader<Uint8Array>} reader where to read from
  * @param {Uint8Array} buffer
  * @param {number} length to be skipped
- * @returns {Promise<Uint8Array>} buffer positionend after skipped bytes
+ * @returns {Promise<Uint8Array|undefined>} buffer positionend after skipped bytes
  */
 export async function skip(reader, buffer, length) {
-  buffer = await fill(reader, buffer, length);
-  return buffer.subarray(length);
+  return (await fill(reader, buffer, length))?.subarray(length);
 }
 
 /**

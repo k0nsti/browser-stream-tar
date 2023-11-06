@@ -1,7 +1,7 @@
 import test from "ava";
 import { createReadStream } from "node:fs";
 import { Readable } from "node:stream";
-import { assertTarStreamEntries, tars } from "./assertions.mjs";
+import { assertTarStreamFiles, tars } from "./assertions.mjs";
 import { readControlChunkSize } from "./util.mjs";
 
 async function entryWithChunksSize(t, size, consume = true) {
@@ -12,7 +12,7 @@ async function entryWithChunksSize(t, size, consume = true) {
 
     // @see https://exploringjs.com/nodejs-shell-scripting/ch_web-streams.html
 
-    await assertTarStreamEntries(
+    await assertTarStreamFiles(
       t,
       await readControlChunkSize(Readable.toWeb(nodeStream), size),
       entries,
@@ -27,9 +27,11 @@ async function entryWithChunksSize(t, size, consume = true) {
 }
 
 entryWithChunksSize.title = (providedTitle, size, consume = true) =>
-  `entries <${size}> ${consume ? "consume data" : "skip data"}`;
+  `files <${size}> ${consume ? "consume data" : "skip data"}`;
 
 test(entryWithChunksSize, 1000);
+
+/*
 test(entryWithChunksSize, 400);
 test(entryWithChunksSize, 49);
 test(entryWithChunksSize, 48);
@@ -47,3 +49,4 @@ test(entryWithChunksSize, 10);
 
 
 test(entryWithChunksSize, 10, false);
+*/

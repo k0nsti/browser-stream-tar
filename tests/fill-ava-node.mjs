@@ -1,7 +1,7 @@
 import test from "ava";
 import { createReadStream } from "node:fs";
 import { Readable } from "node:stream";
-import { fill, toString } from "../src/tar.mjs";
+import { fill } from "../src/tar.mjs";
 import { readControlChunkSize } from "./util.mjs";
 
 test("fill once", async t => {
