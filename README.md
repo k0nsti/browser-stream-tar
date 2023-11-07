@@ -32,28 +32,26 @@ for await (const file of files(response.body)) {
 ### Table of Contents
 
 *   [BLOCKSIZE](#blocksize)
-*   [TarEntry](#tarentry)
+*   [File](#file)
     *   [Properties](#properties)
 *   [decodePaxHeader](#decodepaxheader)
     *   [Parameters](#parameters)
 *   [decodeHeader](#decodeheader)
     *   [Parameters](#parameters-1)
-*   [entries](#entries)
+*   [files](#files)
     *   [Parameters](#parameters-2)
 *   [enqueue](#enqueue)
 *   [buffer](#buffer)
-*   [files](#files)
+*   [decodeString](#decodestring)
     *   [Parameters](#parameters-3)
-*   [toString](#tostring)
+*   [decodeInteger](#decodeinteger)
     *   [Parameters](#parameters-4)
-*   [toInteger](#tointeger)
-    *   [Parameters](#parameters-5)
 *   [fill](#fill)
-    *   [Parameters](#parameters-6)
+    *   [Parameters](#parameters-5)
 *   [skip](#skip)
-    *   [Parameters](#parameters-7)
+    *   [Parameters](#parameters-6)
 *   [streamToUint8Array](#streamtouint8array)
-    *   [Parameters](#parameters-8)
+    *   [Parameters](#parameters-7)
 
 ## BLOCKSIZE
 
@@ -77,7 +75,7 @@ prefix       345             155             NUL-terminated if NUL fits
 
 Type: [number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)
 
-## TarEntry
+## File
 
 Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)
 
@@ -90,8 +88,8 @@ Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 *   `gname` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 *   `uid` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
 *   `gid` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)**&#x20;
-*   `mtime` **[Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)**&#x20;
-*   `stream` **ReadableStream**&#x20;
+*   `lastModified` **[Date](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Date)**&#x20;
+*   `stream` **ReadableStream** ()
 
 ## decodePaxHeader
 
@@ -103,7 +101,7 @@ Decodes a PAX header
 
 *   `reader` **ReadableStreamReader** where to read from
 *   `buffer` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
-*   `header` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** to be filled with values form buffer
+*   `file` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** to be filled with values form buffer
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>** buffer positioned after the consumed bytes
 
@@ -115,19 +113,19 @@ Decodes the next header.
 
 *   `reader` **ReadableStreamReader<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>** where to read from
 *   `buffer` **([Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))**&#x20;
-*   `header` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** to be filled with values form buffer and reader
+*   `file` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** to be filled with values form buffer and reader
 
 Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<([Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))>** buffer positioned after the consumed bytes
 
-## entries
+## files
 
-Provide tar entry iterator.
+Provide tar entries as Files.
 
 ### Parameters
 
 *   `tar` **ReadableStream**&#x20;
 
-Returns **AsyncIterator<[TarEntry](#tarentry)>**&#x20;
+Returns **AsyncIterator<[File](#file)>**&#x20;
 
 ## enqueue
 
@@ -147,19 +145,9 @@ HDD ... DDDDDDDDDDDDDDDDDD------------HHHHHH
 \[BUFFER .... ]             \[BUFFER ... ]
 +-----------  skip --------+
 
-## files
+## decodeString
 
-Provide tar entries as Files.
-
-### Parameters
-
-*   `tar` **ReadableStream**&#x20;
-
-Returns **AsyncIterator\<File>**&#x20;
-
-## toString
-
-Convert bytes into string
+Convert bytes into string.
 
 ### Parameters
 
@@ -167,9 +155,9 @@ Convert bytes into string
 
 Returns **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)**&#x20;
 
-## toInteger
+## decodeInteger
 
-Convert ASCII octal number into number
+Convert ASCII octal number into number.
 
 ### Parameters
 
@@ -179,7 +167,7 @@ Returns **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/G
 
 ## fill
 
-Read bytes from a reader and append them to a given buffer until a requested length of the buffer is reached
+Read bytes from a reader and append them to a given buffer until a requested length of the buffer is reached.
 
 ### Parameters
 
@@ -191,7 +179,7 @@ Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 ## skip
 
-Skip some bytes from a buffer
+Skip some bytes from a buffer.
 
 ### Parameters
 
@@ -199,7 +187,7 @@ Skip some bytes from a buffer
 *   `buffer` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 *   `length` **[number](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Number)** to be skipped
 
-Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>** buffer positionend after skipped bytes
+Returns **[Promise](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Promise)<([Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array) | [undefined](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/undefined))>** buffer positionend after skipped bytes
 
 ## streamToUint8Array
 
