@@ -1,5 +1,24 @@
 name: Pull Request Labeler
 'on':
+  '0': p
+  '1': u
+  '2': l
+  '3': l
+  '4': _
+  '5': r
+  '6': e
+  '7': q
+  '8': u
+  '9': e
+  '10': s
+  '11': t
+  '12': _
+  '13': t
+  '14': a
+  '15': r
+  '16': g
+  '17': e
+  '18': t
   pull_request:
     types:
       - opened
@@ -7,8 +26,11 @@ jobs:
   triage:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/labeler@main
+      - uses: actions/labeler@v4
         with:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           configuration-path: .github/pr_labeler.yml
           sync-labels: false
+    permissions:
+      contents: read
+      pull-requests: write
