@@ -20,11 +20,12 @@ jobs:
         node-version:
           - 20.10.0
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.1.1
       - uses: actions/setup-node@v4.0.1
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
+          cache-dependency-path: package-lock.json
       - run: npm ci
       - run: npm run cover --if-present
       - name: Coveralls Parallel
@@ -59,11 +60,12 @@ jobs:
       - test-browser
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4.1.1
       - uses: actions/setup-node@v4.0.1
         with:
           node-version: 20.10.0
           cache: npm
+          cache-dependency-path: package-lock.json
       - run: npm ci
       - run: npx semantic-release
         env:
