@@ -182,6 +182,7 @@ export async function* files(tar) {
       }
     });
 
+    file.arrayBuffer = async() => streamToUint8Array(stream);
     file.text = async () => DECODER.decode(await streamToUint8Array(stream));
     file.stream = () => stream;
 
