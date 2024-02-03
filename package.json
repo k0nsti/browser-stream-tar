@@ -42,7 +42,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/k0nsti/browser-stream-tar"
+    "url": "git+https://github.com/k0nsti/browser-stream-tar.git"
   },
   "bugs": {
     "url": "https://github.com/k0nsti/browser-stream-tar/issues"
