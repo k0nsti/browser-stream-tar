@@ -6,6 +6,7 @@ name: Update package lock
   push:
     paths:
       - package.json
+  workflow_dispatch: null
 jobs:
   update_package_lock:
     runs-on: ubuntu-latest
@@ -19,7 +20,7 @@ jobs:
           - chrome
     steps:
       - uses: actions/checkout@v4.1.1
-      - uses: actions/setup-node@v4.0.1
+      - uses: actions/setup-node@v4.0.2
         with:
           node-version: ${{ matrix.node-version }}
       - run: rm package-lock.json
