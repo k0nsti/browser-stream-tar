@@ -5,8 +5,12 @@
     "access": "public",
     "provenance": true
   },
+  "types": "./types/tar.d.mts",
   "exports": {
-    ".": "./src/tar.mjs"
+    ".": {
+      "types": "./types/tar.d.mts",
+      "default": "./src/tar.mjs"
+    }
   },
   "description": "split tar web-stream into a sequence of Files",
   "keywords": [
@@ -22,6 +26,7 @@
   ],
   "license": "BSD-2-Clause",
   "scripts": {
+    "prepare": "tsc --allowJs --declaration --emitDeclarationOnly --declarationDir types -t esnext -m esnext --module nodenext --moduleResolution nodenext ./src**/*.mjs",
     "test": "npm run test:browser-ava && npm run test:ava",
     "test:ava": "ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs",
     "test:browser-ava": "browser-ava --headless --no-keep-open tests/*-ava.mjs tests/*-ava-browser.mjs",
