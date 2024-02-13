@@ -8,8 +8,8 @@
   "types": "./types/tar.d.mts",
   "exports": {
     ".": {
-      "types": "./types/tar.d.mts",
-      "default": "./src/tar.mjs"
+      "default": "./src/tar.mjs",
+      "types": "./types/tar.d.mts"
     }
   },
   "description": "split tar web-stream into a sequence of Files",
