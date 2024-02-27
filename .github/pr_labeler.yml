@@ -2,7 +2,7 @@ test:
   - tests/**/*
 documentation:
   - docs/**/*
-  - '**/*.md'
+  - "**/*.md"
 dependencies:
   - package-lock.json
   - yarn.lockfile
@@ -29,4 +29,4 @@ openapi:
 labels:
   - .github/pr_labeler.yml
 styling:
-  - '**/*.css'
+  - "**/*.css"
