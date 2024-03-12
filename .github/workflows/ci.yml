@@ -21,7 +21,7 @@ jobs:
           - windows-latest
         node-version: 20.11.1
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4.1.2
       - uses: actions/setup-node@v4.0.2
         with:
           node-version: ${{ matrix.node-version }}
@@ -45,7 +45,7 @@ jobs:
           - chrome
           - firefox
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4.1.2
       - uses: actions/setup-node@v4.0.2
         with:
           node-version: 20.11.1
@@ -67,7 +67,7 @@ jobs:
       pull-requests: write
       id-token: write
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v4.1.2
       - uses: actions/setup-node@v4.0.2
         with:
           node-version: 20.11.1
