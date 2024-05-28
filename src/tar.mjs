@@ -247,8 +247,8 @@ export function overflow(size) {
 /**
  * Read bytes from a reader and append them to a given buffer until a requested length of the buffer is reached.
  * @param {ReadableStreamReader<Uint8Array>} reader where to read from
- * @param {Uint8Array|undefined} buffer initial buffer or undefined
- * @param {number} length desired buffer length
+ * @param {Uint8Array|undefined} [buffer] initial buffer or undefined
+ * @param {number} [length] desired buffer length
  * @returns {Promise<Uint8Array|undefined>} filled up buffer
  */
 export async function fill(reader, buffer, length) {
