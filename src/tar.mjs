@@ -137,7 +137,7 @@ export async function decodeHeader(reader, buffer, file) {
 /**
  * Provide tar entries as Files.
  * @param {ReadableStream} tar
- * @return {AsyncIterator<File>}
+ * @return {AsyncIterable<File>}
  */
 export async function* files(tar) {
   const reader = tar.getReader();
