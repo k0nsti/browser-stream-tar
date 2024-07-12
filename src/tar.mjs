@@ -32,7 +32,7 @@ const DECODER = new TextDecoder();
  * @property {number} uid
  * @property {number} gid
  * @property {Date} lastModified
- * @property {ReadableStream} stream()
+ * @property {() => ReadableStream} stream
  */
 
 const mime = {
