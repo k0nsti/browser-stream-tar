@@ -1,7 +1,7 @@
 import { files } from "browser-stream-tar";
 
 export const tars = {
-/*  "unicode-bsd2.tar": [
+  /*  "unicode-bsd2.tar": [
     {
       name: "høllø.txt",
       type: "text/plain",
@@ -27,9 +27,15 @@ export const tars = {
     { name: "513.bytes" }
   ],
   "v7.tar": [{ name: "test.txt", type: "text/plain" }],
-//  "unicode.tar": [{ name: "høstål.txt", type: "text/plain" }],
+  //  "unicode.tar": [{ name: "høstål.txt", type: "text/plain" }],
   "unicode-bsd.tar": [{ name: "høllø.txt", type: "text/plain" }],
-//  "global-header.tar": [{ name: "ab", type: "application/octet-stream" }]
+  //  "global-header.tar": [{ name: "ab", type: "application/octet-stream" }],
+ /* "gnutar-long-names.tar": [
+    {
+      name: "a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z/file.txt",
+      type: "text/plain"
+    }
+  ]*/
 };
 
 export async function assertTarStreamFiles(
@@ -41,7 +47,11 @@ export async function assertTarStreamFiles(
   let i = 0;
   for await (const entry of files(stream)) {
     for (const [k, v] of Object.entries(entryNames[i])) {
-      t.deepEqual(entry[k], v, `[${i} '${entry.name}'].${k} ${JSON.stringify(entry)}`);
+      t.deepEqual(
+        entry[k],
+        v,
+        `[${i} '${entry.name}'].${k} ${JSON.stringify(entry)}`
+      );
     }
 
     const es = await entryStream(entry.name);

@@ -111,8 +111,17 @@ export async function decodeHeader(reader, buffer, file) {
       case 53: // '5' directory
       case 54: // '6' FIFO special
       case 55: // '7' reserved
+      case 86: // 'V' tape/volume header Ignore on extraction
         buffer = buffer.subarray(BLOCKSIZE);
         break;
+
+      case 76: // 'L' NEXT file has a long name
+        decodeBase(buffer, file);
+        buffer = await fill(reader, buffer, BLOCKSIZE);
+        file.name = toString(buffer.subarray(0, BLOCKSIZE));
+        //console.log("NAME",file.name,buffer);
+        // TODO '././@LongLink'
+        return buffer.subarray(BLOCKSIZE); 
 
       case 103: // 'g' Global extended header
       case 120: // 'x' Extended header referring to the next file in the archive
