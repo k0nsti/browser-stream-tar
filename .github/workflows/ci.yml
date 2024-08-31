@@ -70,7 +70,7 @@ jobs:
     needs:
       - test-node
       - test-browser
-    runs-on: linux
+    runs-on: ubuntu-latest
     permissions:
       contents: write
       issues: write
