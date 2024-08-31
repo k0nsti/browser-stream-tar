@@ -82,7 +82,6 @@ function decodeBase(buffer, file) {
 
   file.name = prefix.length ? prefix + "/" + name : name;
 
-
   if (file.name.match(/\._/)) {
     file.type = "application/octet-stream";
   } else {
@@ -121,7 +120,7 @@ export async function decodeHeader(reader, buffer, file) {
         file.name = toString(buffer.subarray(0, BLOCKSIZE));
         //console.log("NAME",file.name,buffer);
         // TODO '././@LongLink'
-        return buffer.subarray(BLOCKSIZE); 
+        return buffer.subarray(BLOCKSIZE);
 
       case 103: // 'g' Global extended header
       case 120: // 'x' Extended header referring to the next file in the archive
@@ -191,7 +190,7 @@ export async function* files(tar) {
       }
     });
 
-    file.arrayBuffer = async() => streamToUint8Array(stream);
+    file.arrayBuffer = async () => streamToUint8Array(stream);
     file.text = async () => DECODER.decode(await streamToUint8Array(stream));
     file.stream = () => stream;
 
@@ -199,11 +198,7 @@ export async function* files(tar) {
 
     if (!consumed) {
       const reader = stream.getReader();
-
-      let result;
-      do {
-        result = await reader.read();
-      } while (!result.done);
+      while (!(await reader.read()).done);
     }
   }
 }
