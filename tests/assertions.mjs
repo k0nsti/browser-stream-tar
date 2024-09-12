@@ -18,10 +18,10 @@ export const tars = {
   "bytes.tar": [
     {
       name: "0.bytes",
-      mode: 0o644,
+    //  mode: 0o644,
       lastModified: new Date("2022-11-10T20:00:07+0000")
     },
-    { name: "1.bytes", uid: 501, gid: 20, gname: "staff", uname: "markus" },
+    { name: "1.bytes", /*uid: 501, gid: 20, gname: "staff", uname: "markus"*/ },
     { name: "511.bytes" },
     { name: "512.bytes" },
     { name: "513.bytes" }

@@ -23,35 +23,14 @@ const BLOCKSIZE = 512;
 const DECODER = new TextDecoder();
 
 /**
- * @typedef {Object} File
- * @property {string} name
- * @property {number} size
- * @property {number} mode
- * @property {string} uname
- * @property {string} gname
- * @property {number} uid
- * @property {number} gid
- * @property {Date} lastModified
- * @property {() => ReadableStream} stream
- */
-
-const mime = {
-  ".txt": "text/plain",
-  ".csv": "text/csv",
-  ".json": "application/json",
-  ".xml": "application/xml",
-  ".tar": "application/x-tar"
-};
-
-/**
  * Decodes a PAX header
  * @see https://www.systutorials.com/docs/linux/man/5-star/
  * @param {ReadableStreamReader} reader where to read from
  * @param {Uint8Array} buffer
- * @param {Object} file to be filled with values form buffer
+ * @param {Object} header to be filled with values form buffer
  * @returns {Promise<Uint8Array>} buffer positioned after the consumed bytes
  */
-export async function decodePaxHeader(reader, buffer, file) {
+export async function decodePaxHeader(reader, buffer, header) {
   buffer = await fill(reader, buffer, BLOCKSIZE);
 
   for (const line of DECODER.decode(buffer).split(/\n/)) {
@@ -61,7 +40,7 @@ export async function decodePaxHeader(reader, buffer, file) {
       if (key === "path") {
         key = "name";
       }
-      file[key] = m[2];
+      header[key] = m[2];
     }
   }
 
@@ -78,30 +57,24 @@ function decodeBase(buffer, file) {
   //file.magic = decodeString(buffer.subarray(257, 265));
   file.uname = decodeString(buffer.subarray(265, 297));
   file.gname = decodeString(buffer.subarray(297, 329));
+
   const prefix = decodeString(buffer.subarray(345, 500));
-
   file.name = prefix.length ? prefix + "/" + name : name;
-
-  if (file.name.match(/\._/)) {
-    file.type = "application/octet-stream";
-  } else {
-    const m = file.name.match(/(\.\w+)$/);
-    file.type = mime[m?.[1]] || "application/octet-stream";
-  }
 }
 
 /**
  * Decodes the next header.
  * @param {ReadableStreamReader<Uint8Array>} reader where to read from
  * @param {Uint8Array|undefined} buffer
- * @param {Object} file to be filled with values form buffer and reader
+ * @param {Object} header to be filled with values form buffer and reader
  * @returns {Promise<Uint8Array|undefined>} buffer positioned after the consumed bytes
  */
-export async function decodeHeader(reader, buffer, file) {
+export async function decodeHeader(reader, buffer, header) {
   while ((buffer = await fill(reader, buffer, BLOCKSIZE))) {
     if (buffer[0] === 0) break;
 
     const type = buffer[156];
+
     switch (type) {
       case 49: // '1' link
       case 50: // '2' reserved
@@ -115,25 +88,25 @@ export async function decodeHeader(reader, buffer, file) {
         break;
 
       case 76: // 'L' NEXT file has a long name
-        decodeBase(buffer, file);
+        decodeBase(buffer, header);
         buffer = await fill(reader, buffer, BLOCKSIZE);
-        file.name = toString(buffer.subarray(0, BLOCKSIZE));
-        //console.log("NAME",file.name,buffer);
-        // TODO '././@LongLink'
+        header.name = toString(buffer.subarray(0, BLOCKSIZE));
+        //console.log("NAME", header.name);
         return buffer.subarray(BLOCKSIZE);
+        break;
 
       case 103: // 'g' Global extended header
       case 120: // 'x' Extended header referring to the next file in the archive
         buffer = buffer.subarray(BLOCKSIZE);
         return decodeHeader(
           reader,
-          await decodePaxHeader(reader, buffer, file),
-          file
+          await decodePaxHeader(reader, buffer, header),
+          header
         );
 
       case 0: //     regular file
       case 48: // '0' regular file
-        decodeBase(buffer, file);
+        decodeBase(buffer, header);
         return buffer.subarray(BLOCKSIZE);
 
       default:
@@ -143,21 +116,28 @@ export async function decodeHeader(reader, buffer, file) {
 }
 
 /**
- * Provide tar entries as Files.
+ * Provide tar entry iterator.
  * @param {ReadableStream} tar
  * @return {AsyncIterable<File>}
  */
 export async function* files(tar) {
   const reader = tar.getReader();
 
-  let buffer, file;
+  let buffer, header;
 
-  while ((buffer = await decodeHeader(reader, buffer, (file = {})))) {
+  while ((buffer = await decodeHeader(reader, buffer, (header = {})))) {
     let consumed = false;
+
+    if (header.prefix) {
+      if (header.prefix.length) {
+        header.name = header.prefix + "/" + header.name;
+      }
+      delete header.prefix;
+    }
 
     const stream = new ReadableStream({
       async pull(controller) {
-        let remaining = file.size;
+        let remaining = header.size;
         while (remaining >= buffer.length) {
           remaining = remaining - buffer.length;
           controller.enqueue(buffer);
@@ -183,18 +163,14 @@ export async function* files(tar) {
          *            [BUFFER .... ]             [BUFFER ... ]
          *            +-----------  skip --------+
          */
-        buffer = await skip(reader, buffer, remaining + overflow(file.size));
+        buffer = await skip(reader, buffer, remaining + overflow(header.size));
 
         controller.close();
         consumed = true;
       }
     });
 
-    file.arrayBuffer = async () => streamToUint8Array(stream);
-    file.text = async () => DECODER.decode(await streamToUint8Array(stream));
-    file.stream = () => stream;
-
-    yield file;
+    yield new StreamFile(stream, header.name, header);
 
     if (!consumed) {
       const reader = stream.getReader();
@@ -314,4 +290,46 @@ async function streamToUint8Array(stream) {
   }
 
   return buffer;
+}
+
+export const extension2Mime = {
+  ".txt": "text/plain",
+  ".csv": "text/csv",
+  ".json": "application/json",
+  ".xml": "application/xml",
+  ".tar": "application/x-tar"
+};
+
+export function typeFromName(name) {
+  if (name.match(/\._/)) {
+    return "application/octet-stream";
+  }
+  const m = name.match(/(\.\w+)$/);
+  return extension2Mime[m?.[1]] || "application/octet-stream";
+}
+
+export class StreamFile extends File {
+  #stream;
+  #lastModified;
+  constructor(stream, name, options) {
+    super([], name, options);
+    this.#stream = stream;
+    this.#lastModified = options.lastModified;
+  }
+
+  get stream() {
+    return () => this.#stream;
+  }
+
+  async text() {
+    return new TextDecoder().decode(await streamToUint8Array(this.#stream));
+  }
+
+  get type() {
+    return typeFromName(this.name);
+  }
+
+  get lastModified() {
+    return this.#lastModified;
+  }
 }

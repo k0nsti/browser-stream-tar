@@ -31,7 +31,6 @@ const reader = {
   }
 };
 
-
 function magic(buffer, details, offset = 0) {
   details = Object.assign(
     {
@@ -51,7 +50,12 @@ function magic(buffer, details, offset = 0) {
   encodeInteger(buffer, offset + 108, details.uid, 8);
   encodeInteger(buffer, offset + 116, details.gid, 8);
   encodeInteger(buffer, offset + 124, details.size, 12);
-  encodeInteger(buffer, offset + 136, details.lastModified.getTime() / 1000, 12);
+  encodeInteger(
+    buffer,
+    offset + 136,
+    details.lastModified.getTime() / 1000,
+    12
+  );
 
   buffer[offset + 156] = details.type === 0 ? 0 : details.type.charCodeAt(0);
 
@@ -88,7 +92,7 @@ test("header empty", async t => {
   const buffer = new Uint8Array(512);
   buffer[0] = 0;
 
-  t.is(await decodeHeader( reader, buffer), undefined);
+  t.is(await decodeHeader(reader, buffer), undefined);
 });
 
 test("header unknown type", async t => {
@@ -98,7 +102,7 @@ test("header unknown type", async t => {
 
   magic(buffer, { type: "a" }, 0);
 
-  await t.throwsAsync(() => decodeHeader( reader, buffer, {}), {
+  await t.throwsAsync(() => decodeHeader(reader, buffer, {}), {
     message: /Unsupported header type/
   });
 });
@@ -145,8 +149,7 @@ test("header plain file", async t => {
     uname: "",
     gname: "",
     uid: 0,
-    gid: 0,
-    type: 'application/octet-stream'
+    gid: 0
   });
 
   buffer[156] = 0;
@@ -160,7 +163,6 @@ test("header plain file", async t => {
     uname: "",
     gname: "",
     uid: 0,
-    gid: 0,
-    type: 'application/octet-stream'
+    gid: 0
   });
 });
