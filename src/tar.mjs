@@ -48,7 +48,6 @@ export async function decodePaxHeader(reader, buffer, header) {
 }
 
 function decodeBase(buffer, file) {
-  const name = decodeString(buffer.subarray(0, 100));
   file.mode = decodeInteger(buffer.subarray(100, 108));
   file.uid = decodeInteger(buffer.subarray(108, 116));
   file.gid = decodeInteger(buffer.subarray(116, 124));
@@ -58,6 +57,7 @@ function decodeBase(buffer, file) {
   file.uname = decodeString(buffer.subarray(265, 297));
   file.gname = decodeString(buffer.subarray(297, 329));
 
+  const name = decodeString(buffer.subarray(0, 100));
   const prefix = decodeString(buffer.subarray(345, 500));
   file.name = prefix.length ? prefix + "/" + name : name;
 }
@@ -311,10 +311,17 @@ export function typeFromName(name) {
 export class StreamFile extends File {
   #stream;
   #lastModified;
+  #size;
   constructor(stream, name, options) {
     super([], name, options);
     this.#stream = stream;
     this.#lastModified = options.lastModified;
+    this.#size = options.size;
+    this.mode = options.mode;
+    this.uid = options.uid;
+    this.gid = options.gid;
+    this.uname = options.uname;
+    this.gname = options.gname;
   }
 
   get stream() {
@@ -331,5 +338,9 @@ export class StreamFile extends File {
 
   get lastModified() {
     return this.#lastModified;
+  }
+
+  get size() {
+    return this.#size;
   }
 }
