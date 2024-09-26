@@ -1,34 +1,81 @@
 test:
   - tests/**/*
+  - changed-files:
+      - any-glob-to-any-file: tests/**/*
 documentation:
   - docs/**/*
   - "**/*.md"
+  - changed-files:
+      - any-glob-to-any-file:
+          - docs/**/*
+          - "**/*.md"
 dependencies:
   - package-lock.json
   - yarn.lockfile
+  - changed-files:
+      - any-glob-to-any-file:
+          - package-lock.json
+          - yarn.lockfile
 ci:
   - .github/workflows/*
   - .travis.yml
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/workflows/*
+          - .travis.yml
 github:
   - .github/**/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/**/*
 git:
   - .gitignore
+  - changed-files:
+      - any-glob-to-any-file:
+          - .gitignore
 npm:
   - .npmignore
   - package.json
   - package-lock.json
+  - changed-files:
+      - any-glob-to-any-file:
+          - .npmignore
+          - package.json
+          - package-lock.json
 deployment:
   - netlify.toml
   - _redirects
+  - changed-files:
+      - any-glob-to-any-file:
+          - netlify.toml
+          - _redirects
 rollup:
   - rollup.config.mjs
+  - changed-files:
+      - any-glob-to-any-file:
+          - rollup.config.mjs
 vscode:
   - .vscode/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - .vscode/*
 openapi:
   - openapi/*
+  - changed-files:
+      - any-glob-to-any-file:
+          - openapi/*
 labels:
   - .github/pr_labeler.yml
+  - changed-files:
+      - any-glob-to-any-file:
+          - .github/pr_labeler.yml
 styling:
   - "**/*.css"
+  - changed-files:
+      - any-glob-to-any-file:
+          - "**/*.css"
 lint:
   - .stylelintrc.json
+  - changed-files:
+      - any-glob-to-any-file:
+          - .stylelintrc.json
