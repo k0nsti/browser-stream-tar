@@ -82,7 +82,7 @@ Decodes a PAX header
 
 ### Parameters
 
-*   `reader` **ReadableStreamReader** where to read from
+*   `reader` **ReadableStreamReader<[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)>** where to read from
 *   `buffer` **[Uint8Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array)**&#x20;
 *   `header` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)** to be filled with values form buffer
 
