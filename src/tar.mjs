@@ -25,7 +25,7 @@ const DECODER = new TextDecoder();
 /**
  * Decodes a PAX header
  * @see https://www.systutorials.com/docs/linux/man/5-star/
- * @param {ReadableStreamReader} reader where to read from
+ * @param {ReadableStreamReader<Uint8Array>} reader where to read from
  * @param {Uint8Array} buffer
  * @param {Object} header to be filled with values form buffer
  * @returns {Promise<Uint8Array>} buffer positioned after the consumed bytes
@@ -324,8 +324,8 @@ export class StreamFile extends File {
     this.gname = options.gname;
   }
 
-  get stream() {
-    return () => this.#stream;
+  stream() {
+    return this.#stream;
   }
 
   async text() {
