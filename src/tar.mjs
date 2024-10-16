@@ -315,13 +315,15 @@ export class StreamFile extends File {
   constructor(stream, name, options) {
     super([], name, options);
     this.#stream = stream;
-    this.#lastModified = options.lastModified;
-    this.#size = options.size;
-    this.mode = options.mode;
-    this.uid = options.uid;
-    this.gid = options.gid;
-    this.uname = options.uname;
-    this.gname = options.gname;
+    if (options) {
+      this.#lastModified = options.lastModified;
+      this.#size = options.size;
+      this.mode = options.mode;
+      this.uid = options.uid;
+      this.gid = options.gid;
+      this.uname = options.uname;
+      this.gname = options.gname;
+    }
   }
 
   stream() {
