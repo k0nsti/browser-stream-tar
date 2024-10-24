@@ -27,7 +27,7 @@ jobs:
           branch: readme-api
           commit-message: "docs(README): sync API"
       - name: prepare node
-        uses: actions/setup-node@v4.0.4
+        uses: actions/setup-node@v4.1.0
         with:
           node-version: 22.10.0
       - name: install
