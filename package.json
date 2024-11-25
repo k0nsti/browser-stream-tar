@@ -39,7 +39,7 @@
   },
   "devDependencies": {
     "@types/readable-stream": "^4.0.15",
-    "@types/text-encoding": "^0.0.39",
+    "@types/text-encoding": "^0.0.40",
     "ava": "^6.2.0",
     "browser-ava": "^2.3.2",
     "c8": "^10.1.2",
