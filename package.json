@@ -24,7 +24,7 @@
       "email": "markus.felten@gmx.de"
     }
   ],
-  "license": "BSD-2-Clause",
+  "license": "0BSD",
   "scripts": {
     "prepare": "npm run prepare:typescript && node --run prepare:typescript",
     "prepare:typescript": "tsc --allowJs --declaration --emitDeclarationOnly --declarationDir types --resolveJsonModule --target es2024 --lib es2024 -m esnext --module nodenext --moduleResolution nodenext --rootDir src ./src**/*.mjs",
@@ -63,6 +63,7 @@
       "arlac77/template-arlac77-github",
       "arlac77/template-browser-ava",
       "arlac77/template-javascript-component",
+      "arlac77/template-license-MIT",
       "arlac77/template-typescript"
     ]
   }
