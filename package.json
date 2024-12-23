@@ -24,7 +24,7 @@
       "email": "markus.felten@gmx.de"
     }
   ],
-  "license": "0BSD",
+  "license": "MIT",
   "scripts": {
     "prepare": "npm run prepare:typescript && node --run prepare:typescript",
     "prepare:typescript": "tsc --allowJs --declaration --emitDeclarationOnly --declarationDir types --resolveJsonModule --target es2024 --lib es2024 -m esnext --module nodenext --moduleResolution nodenext --rootDir src ./src**/*.mjs",
@@ -41,7 +41,7 @@
     "@types/readable-stream": "^4.0.15",
     "@types/text-encoding": "^0.0.40",
     "ava": "^6.2.0",
-    "browser-ava": "^2.3.4",
+    "browser-ava": "^2.3.5",
     "c8": "^10.1.3",
     "documentation": "^14.0.3",
     "semantic-release": "^24.2.0",
