@@ -1,5 +1,5 @@
 [![npm](https://img.shields.io/npm/v/browser-stream-tar.svg)](https://www.npmjs.com/package/browser-stream-tar)
-[![License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
+[![License](https://img.shields.io/badge/License-MIT--Clause-blue.svg)](https://spdx.org/licenses/MIT.html)
 [![Typed with TypeScript](https://flat.badgen.net/badge/icon/Typed?icon=typescript\&label\&labelColor=blue\&color=555555)](https://typescriptlang.org)
 [![bundlejs](https://deno.bundlejs.com/?q=browser-stream-tar\&badge=detailed)](https://bundlejs.com/?q=browser-stream-tar)
 [![downloads](http://img.shields.io/npm/dm/browser-stream-tar.svg?style=flat-square)](https://npmjs.org/package/browser-stream-tar)
