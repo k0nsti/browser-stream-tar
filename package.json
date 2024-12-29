@@ -32,9 +32,9 @@
     "test:ava": "ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs",
     "test:browser-ava": "browser-ava --headless --no-keep-open tests/*-ava.mjs tests/*-ava-browser.mjs",
     "cover": "c8 -x 'tests/**/*' --temp-directory build/tmp ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs && c8 report -r lcov -o build/coverage --temp-directory build/tmp",
-    "docs": "documentation readme --section=API ./src/**/*.mjs",
+    "docs": "documentation readme --section=API ./src/**/*.mjs && documentation readme --section=API ./src**/*.mjs",
     "lint": "node --run lint:docs && node --run lint:typescript && npm run lint:docs && npm run lint:typescript",
-    "lint:docs": "documentation lint ./src/**/*.mjs",
+    "lint:docs": "documentation lint ./src**/*.mjs",
     "lint:typescript": "tsc --allowJs --checkJs --noEmit --resolveJsonModule --target es2024 --lib es2024 -m esnext --module nodenext --moduleResolution nodenext ./src**/*.mjs"
   },
   "devDependencies": {
