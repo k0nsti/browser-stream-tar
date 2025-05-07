@@ -56,7 +56,7 @@ export async function assertTarStreamFiles(
 
     const es = await entryStream(entry.name);
     if (es) {
-      console.log("CONTENT", `[${i}]`);
+      //console.log("CONTENT", `[${i}]`);
       await compareReadables(
         t,
         es.getReader(),
