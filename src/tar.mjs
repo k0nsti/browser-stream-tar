@@ -289,6 +289,8 @@ async function streamToUint8Array(stream) {
     buffer = newBuffer;
   }
 
+  reader.releaseLock();
+
   return buffer;
 }
 
