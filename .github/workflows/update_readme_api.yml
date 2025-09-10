@@ -32,3 +32,6 @@ jobs:
           node-version: 22.19.0
       - name: install
         run: npm ci
+    permissions:
+      contents: write
+      pull-requests: write
