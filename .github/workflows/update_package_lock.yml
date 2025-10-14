@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v5.0.0
-      - uses: actions/setup-node@v5.0.0
+      - uses: actions/setup-node@v6.0.0
         with:
           node-version: ${{ matrix.node-version }}
       - run: rm package-lock.json
@@ -36,7 +36,7 @@ jobs:
           labels: npm
           commit-message: "chore(deps): lock"
       - name: prepare node
-        uses: actions/setup-node@v5.0.0
+        uses: actions/setup-node@v6.0.0
         with:
           node-version: ${{ matrix.node-version }}
       - name: remove lock
