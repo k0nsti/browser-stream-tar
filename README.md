@@ -8,7 +8,6 @@
 [![Styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Known Vulnerabilities](https://snyk.io/test/github/k0nsti/browser-stream-tar/badge.svg)](https://snyk.io/test/github/k0nsti/browser-stream-tar)
-[![Coverage Status](https://coveralls.io/repos/k0nsti/browser-stream-tar/badge.svg)](https://coveralls.io/github/k0nsti/browser-stream-tar)
 
 # browser-stream-tar
 
