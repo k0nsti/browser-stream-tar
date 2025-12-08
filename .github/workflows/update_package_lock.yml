@@ -11,24 +11,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v6.0.1
-      - uses: actions/setup-node@v6.1.0
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: rm package-lock.json
-      - run: npx playwright install
-      - run: npm install-test
-        env:
-          BROWSER: ${{ matrix.browser }}
-      - uses: gr2m/create-or-update-pull-request-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          path: package-lock.json
-          title: Regenerate package lock
-          body: bring lock in sync
-          branch: package-lock
-          labels: npm
-          commit-message: "chore(deps): lock"
       - name: prepare node
         uses: actions/setup-node@v6.1.0
         with:
@@ -36,7 +18,7 @@ jobs:
       - name: remove lock
         run: rm package-lock.json
       - name: install playwright
-        run: npx playwright install
+        run: npx playwright install --with-deps
       - name: test
         run: npm install-test
         env:
@@ -52,3 +34,21 @@ jobs:
           branch: package-lock
           labels: npm
           commit-message: "chore(deps): lock"
+      - uses: actions/setup-node@v6.1.0
+        with:
+          node-version: ${{ matrix.node-version }}
+      - uses: gr2m/create-or-update-pull-request-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path: package-lock.json
+          title: Regenerate package lock
+          body: bring lock in sync
+          branch: package-lock
+          labels: npm
+          commit-message: "chore(deps): lock"
+      - run: npm install-test
+        env:
+          BROWSER: ${{ matrix.browser }}
+      - run: npx playwright install
+      - run: rm package-lock.json
