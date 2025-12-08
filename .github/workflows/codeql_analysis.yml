@@ -3,41 +3,47 @@ on:
   push:
     branches:
       - master
+      - next
   pull_request:
     branches:
       - master
+      - next
 jobs:
   analyze:
     name: Analyze
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
+      - name: checkout
         uses: actions/checkout@v6.0.1
       - run: git checkout
         if: ${{ github.event_name == 'pull_request' }}
         name: git checkout
+      - name: prepare node
+        uses: actions/setup-node@v6.1.0
+        with:
+          node-version: 24.11.1
+      - name: prepare CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: javascript
+      - name: initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: javascript
+      - name: install
+        run: npm ci
+      - name: perform CodeQL analysis
+        uses: github/codeql-action/analyze@v4
+      - name: Checkout repository
+        uses: actions/checkout@v6.0.1
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
         with:
           languages: javascript
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
       - uses: actions/setup-node@v6.1.0
         with:
           node-version: 22.7.0
           cache: npm
       - run: npm ci
-      - name: Perform CodeQL Analysis
-        uses: github/codeql-action/analyze@v4
-      - name: checkout
-        uses: actions/checkout@v6.0.1
-      - name: initialize CodeQL
-        uses: github/codeql-action/init@v4
-        with:
-          languages: javascript
-      - name: prepare node
-        uses: actions/setup-node@v6.1.0
-        with:
-          node-version: 24.11.1
-      - name: install
-        run: npm ci
-      - name: perform CodeQL analysis
-        uses: github/codeql-action/analyze@v4
