@@ -14,13 +14,12 @@ jobs:
       - name: prepare node
         uses: actions/setup-node@v6.1.0
         with:
-          node-version:
-            - 24.11.1
-            - 24.12.0
+          node-version: 24.12.0
       - name: install
         run: npm ci
       - name: run docs
         run: npm run docs
+      - run: npm run docs
       - uses: actions/setup-node@v6.1.0
         with:
           node-version: 22.7.0
@@ -33,7 +32,6 @@ jobs:
           branch: readme-api
           commit-message: "docs(README): sync API"
       - run: npm ci
-      - run: npm run docs
     permissions:
       contents: write
       pull-requests: write
