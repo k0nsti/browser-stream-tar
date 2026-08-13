@@ -34,6 +34,7 @@ jobs:
           title: Sync API into README
           branch: readme-api
           commit-message: "docs(README): sync API"
+          labels: documentation
       - run: npm ci
     permissions:
       contents: write
