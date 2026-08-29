@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 26.8.1
       - name: prepare CodeQL
-        uses: github/codeql-action/init@v4.37.8
+        uses: github/codeql-action/init@v4.37.9
         with:
           languages: javascript
       - name: initialize CodeQL
@@ -33,7 +33,7 @@ jobs:
       - name: install
         run: npm ci
       - name: perform CodeQL analysis
-        uses: github/codeql-action/init@v4.37.8
+        uses: github/codeql-action/init@v4.37.9
       - name: Checkout repository
         uses: actions/checkout@v7.0.1
       - name: Initialize CodeQL
